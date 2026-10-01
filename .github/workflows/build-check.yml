@@ -27,9 +27,7 @@ jobs:
           sudo apt-get install -y fonts-noto-cjk
 
       - name: Setup Typst
-        uses: typst-community/setup-typst@v0.3.0
-        with:
-          typst-version: latest
+        uses: typst-community/setup-typst@v5
 
       - name: Build all session documents (Slides PDF/HTML, Handout, Plan, Script)
         run: |
