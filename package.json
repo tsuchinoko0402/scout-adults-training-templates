@@ -1,0 +1,19 @@
+{
+  "name": "scout-adults-training-templates",
+  "version": "1.0.0",
+  "description": "ボーイスカウトの指導者訓練（講習会、研修所、実修所など）で活用できる、**Marp（投影スライド）** と **Typst（配布資料・要項・口述原稿）** を組み合わせた成果物管理テンプレートリポジトリです。",
+  "license": "MIT",
+  "scripts": {
+    "slides": "marp --theme-set templates/marp-scout-theme.css --allow-local-files --pdf sessions/00-sample-session/slides.md -o sessions/00-sample-session/slides.pdf",
+    "slides:html": "marp --theme-set templates/marp-scout-theme.css --allow-local-files --html sessions/00-sample-session/slides.md -o sessions/00-sample-session/slides.html",
+    "preview": "marp --theme-set templates/marp-scout-theme.css --allow-local-files --server sessions/00-sample-session"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tsuchinoko0402/scout-adults-training-templates/issues"
+  },
+  "homepage": "https://github.com/tsuchinoko0402/scout-adults-training-templates#readme",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.5.1"
+  }
+}

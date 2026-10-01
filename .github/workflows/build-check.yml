@@ -1,0 +1,54 @@
+name: Build Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Test Marp & Typst Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies & system packages
+        run: |
+          npm ci
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v0.3.0
+        with:
+          typst-version: latest
+
+      - name: Build all session documents (Slides PDF/HTML, Handout, Plan, Script)
+        run: |
+          make all SESSION=00-sample-session
+
+      - name: Verify build artifacts exist
+        run: |
+          test -f sessions/00-sample-session/slides.pdf
+          test -f sessions/00-sample-session/slides.html
+          test -f sessions/00-sample-session/handout.pdf
+          test -f sessions/00-sample-session/plan.pdf
+          test -f sessions/00-sample-session/script.pdf
+          ls -lh sessions/00-sample-session/*.pdf sessions/00-sample-session/*.html
+
+      - name: Upload built PDFs and HTML as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-session-artifacts
+          path: |
+            sessions/00-sample-session/*.pdf
+            sessions/00-sample-session/*.html
+          retention-days: 7

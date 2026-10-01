@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#003e2c" />
+      <stop offset="50%" stop-color="#005940" />
+      <stop offset="100%" stop-color="#0d4030" />
+    </linearGradient>
+    <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="50%" stop-color="#80ab82" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.03" />
+    </linearGradient>
+    <linearGradient id="wave2" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#c1d7ae" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#005940" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background base -->
+  <rect width="1920" height="1080" fill="url(#bg-grad)" />
+
+  <!-- Abstract topographic / contour waves -->
+  <path d="M-100,750 C300,600 600,900 1100,700 C1500,540 1750,680 2050,620 L2050,1150 L-100,1150 Z" fill="url(#wave1)" />
+  <path d="M-50,880 C400,780 750,1020 1250,850 C1650,720 1850,800 2050,760 L2050,1150 L-50,1150 Z" fill="url(#wave2)" />
+
+  <!-- Subtle compass / grid accents -->
+  <circle cx="1700" cy="200" r="320" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.07" stroke-dasharray="8 6" />
+  <circle cx="1700" cy="200" r="220" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.05" />
+  <circle cx="1700" cy="200" r="120" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.08" />
+  <line x1="1700" y1="50" x2="1700" y2="350" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.08" />
+  <line x1="1550" y1="200" x2="1850" y2="200" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.08" />
+
+  <!-- Stylized scout fleur-de-lis inspired geometric marker (abstract) -->
+  <polygon points="1700,140 1715,190 1700,180 1685,190" fill="#c1d7ae" fill-opacity="0.25" />
+</svg>

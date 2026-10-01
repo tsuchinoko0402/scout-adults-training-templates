@@ -1,0 +1,499 @@
+/*!
+ * @theme scout
+ * @auto-scaling true
+ * @size 16:9 1280px 720px
+ *
+ * ボーイスカウト指導者訓練向け Marp カスタムテーマ
+ * ベースカラー: スカウトグリーン (#005940)
+ */
+
+@import 'default';
+
+:root {
+  /* 共通ブランドカラー（スカウトグリーン） */
+  --color-scout-green: #005940;
+  --color-scout-green-dark: #003e2c;
+  --color-scout-green-light: #eef6f1;
+  --color-scout-olive: #5d6d34;
+  --color-scout-khaki: #b5a642;
+
+  /* 部門カラー */
+  --color-bvs: #0083cb; /* ビーバースカウト水色 */
+  --color-cs: #e49e00;  /* カブスカウト黄色 */
+  --color-bs: #005940;  /* ボーイスカウト緑 */
+  --color-vs: #a6192e;  /* ベンチャースカウト茜色 */
+  --color-rs: #1d2a44;  /* ローバースカウト藍色 */
+
+  /* 基本テキスト・背景色 */
+  --color-text-main: #2b2b2b;
+  --color-text-sub: #555555;
+  --color-bg-main: #ffffff;
+  --color-bg-card: #f8faf8;
+  --color-border: #d0ded4;
+  --color-accent-amber: #e67e22;
+
+  /* フォント定義 */
+  --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'BIZ UDPGothic', sans-serif;
+}
+
+/* スライド全体基本設定（上揃え・固定ヘッダー/フッター余白確保） */
+section {
+  width: 1280px;
+  height: 720px;
+  font-family: var(--font-sans);
+  font-size: 25px;
+  line-height: 1.6;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-main);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* コンテンツは常に一番上から上揃え */
+  align-items: stretch;
+  padding: 68px 60px 54px 60px; /* 上部ヘッダー帯・下部フッター帯の余白 */
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* ----------------------------------------------------
+ * ヘッダー帯（背景色付き・一番上に固定）
+ * ---------------------------------------------------- */
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background-color: var(--color-scout-green);
+  color: #ffffff;
+  padding: 0 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  box-sizing: border-box;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+header span {
+  display: inline-block;
+}
+
+/* ----------------------------------------------------
+ * フッター帯（壁紙背景付き・一番下に固定）
+ * ---------------------------------------------------- */
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background-image:
+    url('../../assets/PCWall_BS.png'),
+    url('../assets/PCWall_BS.png'),
+    url('../../assets/PCWall_2880x1864_BS.jpg'),
+    url('../assets/PCWall_2880x1864_BS.jpg'),
+    url('../../assets/dummy-bg.svg'),
+    url('../assets/dummy-bg.svg'),
+    linear-gradient(135deg, #003e2c 0%, #005940 100%);
+  background-size: cover;
+  background-position: center 55%;
+  color: #ffffff;
+  padding: 0 45px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-sizing: border-box;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+footer span {
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+
+footer img.footer-logo {
+  height: 24px;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+footer img.footer-tagline {
+  height: 22px;
+  width: auto;
+  vertical-align: middle;
+  filter: brightness(0) invert(1); /* 白抜き表示 */
+}
+
+/* ページネーション（フッター真ん中・中央揃え） */
+section::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------
+ * スライドタイトル（一番上に固定・幅100%）
+ * ---------------------------------------------------- */
+h1 {
+  font-family: var(--font-heading);
+  font-size: 1.7em;
+  font-weight: 700;
+  color: var(--color-scout-green);
+  margin-top: 0;
+  margin-bottom: 0.45em;
+  padding-bottom: 0.2em;
+  border-bottom: 2.5px solid var(--color-scout-green);
+  width: 100%;
+  flex-shrink: 0;
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-size: 1.35em;
+  font-weight: 700;
+  color: var(--color-scout-green-dark);
+  margin-top: 0.3em;
+  margin-bottom: 0.35em;
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--color-scout-olive);
+  margin-top: 0.3em;
+  margin-bottom: 0.25em;
+}
+
+p, ul, ol {
+  margin-top: 0.15em;
+  margin-bottom: 0.5em;
+}
+
+li {
+  margin-bottom: 0.25em;
+}
+
+strong {
+  color: var(--color-scout-green-dark);
+}
+
+/* 引用ブロック（BP語録・強調用） */
+blockquote {
+  border-left: 5px solid var(--color-scout-green);
+  background: var(--color-scout-green-light);
+  padding: 12px 18px;
+  margin: 14px 0;
+  border-radius: 0 8px 8px 0;
+  color: #1a4329;
+  font-size: 0.92em;
+  font-style: normal;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* テーブルスタイル（展開表・進行表用） */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8em;
+  margin: 12px 0;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+}
+
+th {
+  background-color: var(--color-scout-green);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 9px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--color-scout-green-dark);
+}
+
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+tr:nth-child(even) td {
+  background-color: #f7faf8;
+}
+
+/* ----------------------------------------------------
+ * レイアウト用クラス
+ * ---------------------------------------------------- */
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+
+.columns-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+  margin-top: 8px;
+}
+
+.card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 15px 18px;
+  box-shadow: 0 3px 10px rgba(0, 89, 64, 0.05);
+  font-size: 0.88em;
+}
+
+.card-title {
+  font-size: 1.08em;
+  font-weight: 700;
+  color: var(--color-scout-green);
+  border-bottom: 2px solid var(--color-scout-green);
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+}
+
+/* ----------------------------------------------------
+ * 表紙スライド（Lead）
+ * ---------------------------------------------------- */
+
+section.lead,
+section.lead-bs,
+section.lead-vs,
+section.lead-cs,
+section.lead-bvs,
+section.lead-rs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 50px 70px;
+  color: #ffffff;
+  background-size: cover;
+  background-position: center center;
+}
+
+/* 表紙のヘッダー・フッター・ページネーションを無効化 */
+section.lead header,
+section.lead footer,
+section.lead::after,
+section.lead-bs header,
+section.lead-bs footer,
+section.lead-bs::after {
+  display: none !important;
+}
+
+/* 表紙の研修名（コース名）ラベル */
+section.lead h4,
+section.lead-bs h4 {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #cdecd5;
+  letter-spacing: 0.08em;
+  margin: 0 0 10px 0;
+  padding: 4px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  display: inline-block;
+}
+
+/* 表紙の見出し */
+section.lead h1,
+section.lead-bs h1 {
+  color: #ffffff;
+  font-size: 2.3em;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.7);
+  padding-bottom: 0.25em;
+  margin-bottom: 0.35em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  width: auto;
+}
+
+section.lead h2,
+section.lead-bs h2 {
+  color: #f1f8f3;
+  font-size: 1.25em;
+  font-weight: 400;
+  margin-bottom: 0.8em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+section.lead p,
+section.lead-bs p {
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+section.lead strong,
+section.lead-bs strong {
+  color: #ffffff;
+}
+
+/* 表紙のメタ情報ボックス（日時・場所・担当者） */
+.lead-meta {
+  margin-top: 14px;
+  padding: 12px 24px;
+  background: rgba(0, 30, 20, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 0.75em;
+  line-height: 1.7;
+  color: #ffffff;
+  display: inline-block;
+  text-align: left;
+}
+
+.lead-meta p {
+  margin: 0;
+}
+
+/* デフォルト・ボーイ部門 (BS) 表紙背景 */
+section.lead,
+section.lead-bs {
+  background-image:
+    url('../../assets/PCWall_BS.png'),
+    url('../assets/PCWall_BS.png'),
+    url('../../assets/PCWall_2880x1864_BS.jpg'),
+    url('../assets/PCWall_2880x1864_BS.jpg'),
+    url('../../assets/dummy-bg.svg'),
+    url('../assets/dummy-bg.svg'),
+    linear-gradient(135deg, #003e2c 0%, #005940 100%);
+}
+
+/* ビーバー部門 (BVS) 表紙背景 */
+section.lead-bvs {
+  background-image:
+    url('../../assets/PCWall_BVS.png'),
+    url('../assets/PCWall_BVS.png'),
+    url('../../assets/PCWall_2880x1864_BVS.jpg'),
+    url('../assets/PCWall_2880x1864_BVS.jpg'),
+    linear-gradient(135deg, #005f9e 0%, #00a4e4 100%);
+}
+
+/* カブ部門 (CS) 表紙背景 */
+section.lead-cs {
+  background-image:
+    url('../../assets/PCWall_CS.png'),
+    url('../assets/PCWall_CS.png'),
+    url('../../assets/PCWall_2880x1864_CS.jpg'),
+    url('../assets/PCWall_2880x1864_CS.jpg'),
+    linear-gradient(135deg, #c77b00 0%, #fdb913 100%);
+}
+
+/* ベンチャー部門 (VS) 表紙背景 */
+section.lead-vs {
+  background-image:
+    url('../../assets/PCWall_VS.png'),
+    url('../assets/PCWall_VS.png'),
+    url('../../assets/PCWall_2880x1864_VS.jpg'),
+    url('../assets/PCWall_2880x1864_VS.jpg'),
+    linear-gradient(135deg, #7a0016 0%, #ba0c2f 100%);
+}
+
+/* ローバー部門 (RS) 表紙背景 */
+section.lead-rs {
+  background-image:
+    url('../../assets/PCWall_RS.png'),
+    url('../assets/PCWall_RS.png'),
+    url('../../assets/PCWall_2880x1864_RS.jpg'),
+    url('../assets/PCWall_2880x1864_RS.jpg'),
+    linear-gradient(135deg, #0b1528 0%, #1e355b 100%);
+}
+
+/* 部門別スライドのフッター背景 */
+section.bvs footer {
+  background-image:
+    url('../../assets/PCWall_BVS.png'),
+    url('../assets/PCWall_BVS.png'),
+    linear-gradient(135deg, #005f9e 0%, #00a4e4 100%);
+}
+
+section.cs footer {
+  background-image:
+    url('../../assets/PCWall_CS.png'),
+    url('../assets/PCWall_CS.png'),
+    linear-gradient(135deg, #c77b00 0%, #fdb913 100%);
+}
+
+section.vs footer {
+  background-image:
+    url('../../assets/PCWall_VS.png'),
+    url('../assets/PCWall_VS.png'),
+    linear-gradient(135deg, #7a0016 0%, #ba0c2f 100%);
+}
+
+section.rs footer {
+  background-image:
+    url('../../assets/PCWall_RS.png'),
+    url('../assets/PCWall_RS.png'),
+    linear-gradient(135deg, #0b1528 0%, #1e355b 100%);
+}
+
+/* ----------------------------------------------------
+ * セクション区切り（扉スライド）
+ * ---------------------------------------------------- */
+section.divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #003e2c 0%, #005940 100%);
+  color: #ffffff;
+  padding: 60px 80px;
+}
+
+section.divider header,
+section.divider footer,
+section.divider::after {
+  display: none !important;
+}
+
+section.divider h1 {
+  color: #ffffff;
+  border: none;
+  font-size: 2.2em;
+  margin-bottom: 0.3em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  width: auto;
+}
+
+section.divider h2 {
+  color: #e2f2e6;
+  font-size: 1.3em;
+  font-weight: 400;
+  border: none;
+}
+
+section.divider p {
+  color: #d8ecde;
+  font-size: 1.1em;
+}

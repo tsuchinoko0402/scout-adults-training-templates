@@ -1,0 +1,9 @@
+{
+  "markdown.marp.themes": [
+    "templates/marp-scout-theme.css"
+  ],
+  "markdown.marp.enableHtml": true,
+  "files.associations": {
+    "*.typ": "typst"
+  }
+}
