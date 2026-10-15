@@ -1,4 +1,4 @@
-#import "../../templates/session-doc-template.typ": session-plan, timeline-table
+#import "/templates/session-doc-template.typ": session-plan, timeline-table
 
 #show: session-plan.with(
   course-name: "20xx年度 指導者研修コース",

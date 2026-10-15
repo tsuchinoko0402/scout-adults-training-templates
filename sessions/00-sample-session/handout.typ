@@ -1,4 +1,4 @@
-#import "../../templates/handout-template.typ": scout-handout, worksheet-box
+#import "/templates/handout-template.typ": scout-handout, worksheet-box
 
 #show: scout-handout.with(
   title: "セッション名（サンプル）",

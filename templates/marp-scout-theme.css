@@ -92,10 +92,16 @@ footer {
   right: 0;
   height: 52px;
   background-image:
+    url('../../../../assets/PCWall_BS.png'),
+    url('../../../assets/PCWall_BS.png'),
     url('../../assets/PCWall_BS.png'),
     url('../assets/PCWall_BS.png'),
+    url('../../../../assets/PCWall_2880x1864_BS.jpg'),
+    url('../../../assets/PCWall_2880x1864_BS.jpg'),
     url('../../assets/PCWall_2880x1864_BS.jpg'),
     url('../assets/PCWall_2880x1864_BS.jpg'),
+    url('../../../../assets/dummy-bg.svg'),
+    url('../../../assets/dummy-bg.svg'),
     url('../../assets/dummy-bg.svg'),
     url('../assets/dummy-bg.svg'),
     linear-gradient(135deg, #003e2c 0%, #005940 100%);
@@ -131,6 +137,22 @@ footer img.footer-tagline {
   width: auto;
   vertical-align: middle;
   filter: brightness(0) invert(1); /* 白抜き表示 */
+}
+
+footer span.footer-tagline {
+  display: inline-block;
+  width: 140px;
+  height: 22px;
+  background-image:
+    url('../../../../assets/tagline_1line.png'),
+    url('../../../assets/tagline_1line.png'),
+    url('../../assets/tagline_1line.png'),
+    url('../assets/tagline_1line.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right center;
+  vertical-align: middle;
+  filter: brightness(0) invert(1);
 }
 
 /* ページネーション（フッター真ん中・中央揃え） */
@@ -379,10 +401,16 @@ section.lead-bs strong {
 section.lead,
 section.lead-bs {
   background-image:
+    url('../../../../assets/PCWall_BS.png'),
+    url('../../../assets/PCWall_BS.png'),
     url('../../assets/PCWall_BS.png'),
     url('../assets/PCWall_BS.png'),
+    url('../../../../assets/PCWall_2880x1864_BS.jpg'),
+    url('../../../assets/PCWall_2880x1864_BS.jpg'),
     url('../../assets/PCWall_2880x1864_BS.jpg'),
     url('../assets/PCWall_2880x1864_BS.jpg'),
+    url('../../../../assets/dummy-bg.svg'),
+    url('../../../assets/dummy-bg.svg'),
     url('../../assets/dummy-bg.svg'),
     url('../assets/dummy-bg.svg'),
     linear-gradient(135deg, #003e2c 0%, #005940 100%);
@@ -391,8 +419,12 @@ section.lead-bs {
 /* ビーバー部門 (BVS) 表紙背景 */
 section.lead-bvs {
   background-image:
+    url('../../../../assets/PCWall_BVS.png'),
+    url('../../../assets/PCWall_BVS.png'),
     url('../../assets/PCWall_BVS.png'),
     url('../assets/PCWall_BVS.png'),
+    url('../../../../assets/PCWall_2880x1864_BVS.jpg'),
+    url('../../../assets/PCWall_2880x1864_BVS.jpg'),
     url('../../assets/PCWall_2880x1864_BVS.jpg'),
     url('../assets/PCWall_2880x1864_BVS.jpg'),
     linear-gradient(135deg, #005f9e 0%, #00a4e4 100%);
@@ -401,8 +433,12 @@ section.lead-bvs {
 /* カブ部門 (CS) 表紙背景 */
 section.lead-cs {
   background-image:
+    url('../../../../assets/PCWall_CS.png'),
+    url('../../../assets/PCWall_CS.png'),
     url('../../assets/PCWall_CS.png'),
     url('../assets/PCWall_CS.png'),
+    url('../../../../assets/PCWall_2880x1864_CS.jpg'),
+    url('../../../assets/PCWall_2880x1864_CS.jpg'),
     url('../../assets/PCWall_2880x1864_CS.jpg'),
     url('../assets/PCWall_2880x1864_CS.jpg'),
     linear-gradient(135deg, #c77b00 0%, #fdb913 100%);
@@ -411,8 +447,12 @@ section.lead-cs {
 /* ベンチャー部門 (VS) 表紙背景 */
 section.lead-vs {
   background-image:
+    url('../../../../assets/PCWall_VS.png'),
+    url('../../../assets/PCWall_VS.png'),
     url('../../assets/PCWall_VS.png'),
     url('../assets/PCWall_VS.png'),
+    url('../../../../assets/PCWall_2880x1864_VS.jpg'),
+    url('../../../assets/PCWall_2880x1864_VS.jpg'),
     url('../../assets/PCWall_2880x1864_VS.jpg'),
     url('../assets/PCWall_2880x1864_VS.jpg'),
     linear-gradient(135deg, #7a0016 0%, #ba0c2f 100%);
@@ -421,8 +461,12 @@ section.lead-vs {
 /* ローバー部門 (RS) 表紙背景 */
 section.lead-rs {
   background-image:
+    url('../../../../assets/PCWall_RS.png'),
+    url('../../../assets/PCWall_RS.png'),
     url('../../assets/PCWall_RS.png'),
     url('../assets/PCWall_RS.png'),
+    url('../../../../assets/PCWall_2880x1864_RS.jpg'),
+    url('../../../assets/PCWall_2880x1864_RS.jpg'),
     url('../../assets/PCWall_2880x1864_RS.jpg'),
     url('../assets/PCWall_2880x1864_RS.jpg'),
     linear-gradient(135deg, #0b1528 0%, #1e355b 100%);
@@ -431,6 +475,8 @@ section.lead-rs {
 /* 部門別スライドのフッター背景 */
 section.bvs footer {
   background-image:
+    url('../../../../assets/PCWall_BVS.png'),
+    url('../../../assets/PCWall_BVS.png'),
     url('../../assets/PCWall_BVS.png'),
     url('../assets/PCWall_BVS.png'),
     linear-gradient(135deg, #005f9e 0%, #00a4e4 100%);
@@ -438,6 +484,8 @@ section.bvs footer {
 
 section.cs footer {
   background-image:
+    url('../../../../assets/PCWall_CS.png'),
+    url('../../../assets/PCWall_CS.png'),
     url('../../assets/PCWall_CS.png'),
     url('../assets/PCWall_CS.png'),
     linear-gradient(135deg, #c77b00 0%, #fdb913 100%);
@@ -445,6 +493,8 @@ section.cs footer {
 
 section.vs footer {
   background-image:
+    url('../../../../assets/PCWall_VS.png'),
+    url('../../../assets/PCWall_VS.png'),
     url('../../assets/PCWall_VS.png'),
     url('../assets/PCWall_VS.png'),
     linear-gradient(135deg, #7a0016 0%, #ba0c2f 100%);
@@ -452,6 +502,8 @@ section.vs footer {
 
 section.rs footer {
   background-image:
+    url('../../../../assets/PCWall_RS.png'),
+    url('../../../assets/PCWall_RS.png'),
     url('../../assets/PCWall_RS.png'),
     url('../assets/PCWall_RS.png'),
     linear-gradient(135deg, #0b1528 0%, #1e355b 100%);

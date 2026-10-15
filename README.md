@@ -107,7 +107,7 @@ cargo install --locked typst-cli
 | `make plan SESSION=00-sample-session` | 指定セッションのセッション要項を PDF 出力 |
 | `make script SESSION=00-sample-session` | 指定セッションの口述要項を PDF 出力 |
 | `make preview SESSION=00-sample-session` | 発表者ツール付き Marp プレビューサーバーを起動 |
-| `make new SESSION=01-patrol-system` | `00-sample-session` を複製して新しいセッションフォルダを作成 |
+| `make new SESSION=01-patrol-system` | `00-sample-session` を複製して新しいセッションフォルダを作成（階層ディレクトリも自動作成） |
 | `make assets` | 日本連盟公式PRツール素材（壁紙・ロゴ）を `assets/` へ自動ダウンロード |
 | `make clean-assets` | ダウンロードした公式PRツール素材を削除（初期ダミー状態へ復元） |
 | `make clean` | 生成された PDF / HTML ファイルを一括削除 |

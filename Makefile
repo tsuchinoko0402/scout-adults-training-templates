@@ -4,7 +4,21 @@
 # ==============================================================================
 
 SESSION ?= 00-sample-session
-SESSION_DIR := sessions/$(SESSION)
+DIR ?=
+
+ifdef DIR
+  TARGET_SESSION := $(DIR)/$(SESSION)
+else
+  TARGET_SESSION := $(SESSION)
+endif
+
+# 先頭に sessions/ が付いていればそのまま、なければ sessions/ を付与
+ifeq ($(patsubst sessions/%,%,$(TARGET_SESSION)),$(TARGET_SESSION))
+  SESSION_DIR := sessions/$(TARGET_SESSION)
+else
+  SESSION_DIR := $(TARGET_SESSION)
+endif
+
 THEME_CSS := templates/marp-scout-theme.css
 
 # Marp CLI コマンドの自動検出（ローカル node_modules、PATH、nvm、または npx）
@@ -28,25 +42,25 @@ TYPST ?= $(shell command -v typst 2>/dev/null || echo "typst")
 # デフォルトターゲット：ヘルプ表示
 help:
 	@echo "ボーイスカウト指導者訓練 成果物管理コマンド一覧:"
-	@echo "  make all         SESSION=<dir>   全成果物（スライドPDF/HTML・配布資料・要項・口述）を一括ビルド"
-	@echo "  make docs        SESSION=<dir>   所長・主任講師提出書類（要項・口述・配布資料）を一括PDF出力"
-	@echo "  make slides      SESSION=<dir>   指定セッションのスライド (Marp) を PDF と HTML の両方で出力"
-	@echo "  make slides-pdf  SESSION=<dir>   指定セッションのスライドを PDF 出力"
-	@echo "  make slides-html SESSION=<dir>   指定セッションのスライドを HTML 出力（ブラウザ上映用）"
-	@echo "  make handout     SESSION=<dir>   指定セッションの受講者配布資料 (Typst) を PDF 出力"
-	@echo "  make plan        SESSION=<dir>   指定セッションのセッション要項 (Typst) を PDF 出力"
-	@echo "  make script      SESSION=<dir>   指定セッションの口述要項 (Typst) を PDF 出力"
-	@echo "  make preview     SESSION=<dir>   Marp プレビューサーバーを起動（発表者ノート付き）"
-	@echo "  make new         SESSION=<dir>   00-sample-session を複製して新しいセッションを作成"
-	@echo "  make assets                      日本連盟公式PRツール素材（壁紙・ロゴ）を assets/ へダウンロード"
-	@echo "  make clean-assets                ダウンロードした公式PRツール素材を assets/ から削除"
-	@echo "  make clean                       生成された PDF / HTML ファイルを削除"
+	@echo "  make all         [DIR=<category>] SESSION=<dir>   全成果物（スライドPDF/HTML・配布資料・要項・口述）を一括ビルド"
+	@echo "  make docs        [DIR=<category>] SESSION=<dir>   所長・主任講師提出書類（要項・口述・配布資料）を一括PDF出力"
+	@echo "  make slides      [DIR=<category>] SESSION=<dir>   指定セッションのスライド (Marp) を PDF と HTML の両方で出力"
+	@echo "  make slides-pdf  [DIR=<category>] SESSION=<dir>   指定セッションのスライドを PDF 出力"
+	@echo "  make slides-html [DIR=<category>] SESSION=<dir>   指定セッションのスライドを HTML 出力（ブラウザ上映用）"
+	@echo "  make handout     [DIR=<category>] SESSION=<dir>   指定セッションの受講者配布資料 (Typst) を PDF 出力"
+	@echo "  make plan        [DIR=<category>] SESSION=<dir>   指定セッションのセッション要項 (Typst) を PDF 出力"
+	@echo "  make script      [DIR=<category>] SESSION=<dir>   指定セッションの口述要項 (Typst) を PDF 出力"
+	@echo "  make preview     [DIR=<category>] SESSION=<dir>   Marp プレビューサーバーを起動（発表者ノート付き）"
+	@echo "  make new         [DIR=<category>] SESSION=<dir>   00-sample-session を複製して新しいセッションを作成"
+	@echo "  make assets                                       日本連盟公式PRツール素材（壁紙・ロゴ）を assets/ へダウンロード"
+	@echo "  make clean-assets                                 ダウンロードした公式PRツール素材を assets/ から削除"
+	@echo "  make clean                                        生成された PDF / HTML ファイルを削除"
 	@echo ""
 	@echo "例:"
 	@echo "  make all SESSION=00-sample-session"
-	@echo "  make slides SESSION=00-sample-session"
-	@echo "  make docs SESSION=00-sample-session"
-	@echo "  make new SESSION=01-patrol-leaders-council"
+	@echo "  make new DIR=01-BS-Koshukai SESSION=01-patrol"
+	@echo "  make all DIR=01-BS-Koshukai SESSION=01-patrol"
+	@echo "  make all SESSION=02-WB-kenshusho/01-patrol-system"
 
 # セッションディレクトリの存在確認
 check-session:
@@ -57,11 +71,11 @@ check-session:
 
 # 全成果物の一括ビルド（スライドPDF/HTML、配布資料、要項、口述）
 all: slides handout plan script
-	@echo "✓ セッション [$(SESSION)] の全成果物ビルドが完了しました。"
+	@echo "✓ セッション [$(TARGET_SESSION)] の全成果物ビルドが完了しました。"
 
 # 所長・主任講師提出書類セット（要項・口述・配布資料）
 docs: plan script handout
-	@echo "✓ セッション [$(SESSION)] の指導者提出書類（要項・口述・配布資料）のPDF生成が完了しました。"
+	@echo "✓ セッション [$(TARGET_SESSION)] の指導者提出書類（要項・口述・配布資料）のPDF生成が完了しました。"
 
 # Marp スライドの一括出力（PDF & HTML の両方）
 slides: slides-pdf slides-html
@@ -112,16 +126,17 @@ preview: check-session
 
 # 新規セッションディレクトリ作成
 new:
-	@if [ -z "$(SESSION)" ] || [ "$(SESSION)" = "00-sample-session" ]; then \
+	@if [ -z "$(TARGET_SESSION)" ] || [ "$(TARGET_SESSION)" = "00-sample-session" ]; then \
 		echo "エラー: 作成するセッション名を指定してください。"; \
-		echo "例: make new SESSION=01-woodbadge-patrol"; \
+		echo "例: make new DIR=01-BS-Koshukai SESSION=01-patrol"; \
+		echo "    または make new SESSION=01-BS-Koshukai/01-patrol"; \
 		exit 1; \
 	fi
 	@if [ -d "$(SESSION_DIR)" ]; then \
 		echo "エラー: セッション '$(SESSION_DIR)' は既に存在します。"; \
 		exit 1; \
 	fi
-	@mkdir -p sessions
+	@mkdir -p "$$(dirname $(SESSION_DIR))"
 	cp -r sessions/00-sample-session $(SESSION_DIR)
 	@echo "✓ 新しいセッション雛形を作成しました: $(SESSION_DIR)"
 	@echo "  - $(SESSION_DIR)/plan.md / plan.typ       (セッション要項)"
@@ -153,5 +168,5 @@ clean-assets:
 # 生成物の削除
 clean:
 	@echo "▶ 生成済み PDF / HTML を削除しています..."
-	rm -f sessions/*/*.pdf sessions/*/*.html
+	find sessions -type f \( -name "*.pdf" -o -name "*.html" \) -delete
 	@echo "✓ クリーンアップ完了"

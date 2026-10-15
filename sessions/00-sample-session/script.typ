@@ -1,4 +1,4 @@
-#import "../../templates/session-doc-template.typ": session-script, script-table, script-item
+#import "/templates/session-doc-template.typ": session-script, script-table, script-item
 
 #show: session-script.with(
   course-name: "20xx年度 指導者研修コース",
