@@ -69,13 +69,13 @@ check-session:
 		exit 1; \
 	fi
 
-# 全成果物の一括ビルド（スライドPDF/HTML、配布資料、要項、口述）
-all: slides handout plan script
+# 全成果物の一括ビルド（スライドPDF/HTML、配布資料、要項、口述、安全計画書）
+all: slides handout plan script safety-plan
 	@echo "✓ セッション [$(TARGET_SESSION)] の全成果物ビルドが完了しました。"
 
-# 所長・主任講師提出書類セット（要項・口述・配布資料）
-docs: plan script handout
-	@echo "✓ セッション [$(TARGET_SESSION)] の指導者提出書類（要項・口述・配布資料）のPDF生成が完了しました。"
+# 所長・主任講師提出書類セット（要項・口述・配布資料・安全計画書）
+docs: plan script handout safety-plan
+	@echo "✓ セッション [$(TARGET_SESSION)] の指導者提出書類（要項・口述・配布資料・安全計画書）のPDF生成が完了しました。"
 
 # Marp スライドの一括出力（PDF & HTML の両方）
 slides: slides-pdf slides-html
@@ -117,6 +117,14 @@ script: check-session
 		echo "✓ 口述要項 PDF 生成完了: $(SESSION_DIR)/script.pdf"; \
 	else \
 		echo "スキップ: $(SESSION_DIR)/script.typ が見つかりません。"; \
+	fi
+
+# Typst 安全計画書の PDF 出力
+safety-plan: check-session
+	@if [ -f "$(SESSION_DIR)/safety-plan.typ" ]; then \
+		echo "▶ 安全計画書をビルド中: $(SESSION_DIR)/safety-plan.typ -> $(SESSION_DIR)/safety-plan.pdf"; \
+		$(TYPST) compile --root . $(SESSION_DIR)/safety-plan.typ $(SESSION_DIR)/safety-plan.pdf; \
+		echo "✓ 安全計画書 PDF 生成完了: $(SESSION_DIR)/safety-plan.pdf"; \
 	fi
 
 # Marp ローカルサーバー起動（発表者ツール付きプレビュー）
