@@ -21,12 +21,12 @@
   trainer-name: "",
   body,
 ) = {
-  let session-label = if session-id != "" [ #session-id. #title ] else [ #title ]
-  let footer-right = if trainer-name != "" [ #session-label (#trainer-name) ] else [ #session-label ]
+  let session-label = if session-id != "" [#session-id. #title] else [#title]
+  let footer-right = if trainer-name != "" [#session-label ｜ #trainer-name] else [#session-label]
 
   set page(
     paper: "a4",
-    margin: (left: 15mm, right: 15mm, top: 18mm, bottom: 18mm),
+    margin: (left: 14mm, right: 14mm, top: 14mm, bottom: 14mm),
     header: context {
       if counter(page).get().first() > 1 [
         #set text(size: 8.5pt, fill: luma(60))
@@ -38,9 +38,9 @@
       ]
     },
     footer: context [
-      #set text(size: 8.5pt, font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
+      #set text(size: 8pt, font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
       #grid(
-        columns: (1fr, 1fr, 1fr),
+        columns: (1fr, auto, 1.5fr),
         align(left)[#course-name],
         align(center)[#counter(page).display("1/1", both: true)],
         align(right)[#footer-right],
@@ -50,31 +50,31 @@
 
   set text(
     font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
-    size: 9.5pt,
+    size: 9pt,
     fill: rgb("#000000"),
     lang: "ja",
   )
 
   set par(
-    leading: 0.65em,
+    leading: 0.58em,
     justify: true,
   )
 
   // 1ページ目タイトルヘッダー
-  block(width: 100%, inset: (bottom: 4pt))[
+  block(width: 100%, inset: (bottom: 2pt))[
     #grid(
       columns: (1fr, auto),
       align: (left, right),
-      [#text(9pt)[#course-name #session-label]],
-      [#text(9pt)[担当：#trainer-name]]
+      [#text(8.5pt)[#course-name #session-label]],
+      [#text(8.5pt)[担当：#trainer-name]]
     )
-    #v(2pt)
+    #v(1pt)
     #align(center)[
-      #text(13pt, weight: "bold")[口述要項]
+      #text(12.5pt, weight: "bold")[口述要項]
     ]
   ]
 
-  v(4pt)
+  v(2pt)
 
   body
 }
@@ -84,11 +84,12 @@
 #let script-table(..rows) = {
   set table(
     stroke: 0.5pt + black,
+    inset: (x: 6pt, y: 4.5pt),
     fill: (col, row) => if row == 0 { header-bg } else { none },
   )
 
   table(
-    columns: (48pt, 1fr, 75pt),
+    columns: (52pt, 1fr, 76pt),
     align: (col, row) => (
       if row == 0 { center + horizon }
       else if col == 0 { center + top }
@@ -104,15 +105,16 @@
   )
 }
 
-/// 口述テーブルの1行を定義するヘルパー関数
+/// 口述テーブルの1行を定義するヘルパー関数（ページ跨ぎでの行途中分割を防止）
 #let script-item(slide-no, script, note: "") = (
-  [#strong(str(slide-no))],
-  [
-    #set par(leading: 0.6em)
+  table.cell(breakable: false)[#strong(str(slide-no))],
+  table.cell(breakable: false)[
+    #set par(leading: 0.52em)
     #script
   ],
-  [
-    #set text(size: 8.5pt)
+  table.cell(breakable: false)[
+    #set text(size: 8pt)
+    #set par(leading: 0.5em)
     #note
   ],
 )
@@ -139,8 +141,8 @@
   trainer-name: "",
   body,
 ) = {
-  let session-label = if session-id != "" [ #session-id. #title ] else [ #title ]
-  let footer-right = if trainer-name != "" [ #session-label (#trainer-name) ] else [ #session-label ]
+  let session-label = if session-id != "" [#session-id. #title] else [#title]
+  let footer-right = if trainer-name != "" [#session-label ｜ #trainer-name] else [#session-label]
 
   set page(
     paper: "a4",
@@ -149,10 +151,11 @@
       #text(8.5pt, fill: luma(60))[#course-name]
     ],
     footer: context [
-      #set text(size: 8.5pt, font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
+      #set text(size: 8pt, font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
       #grid(
-        columns: (1fr, 1fr),
-        align(center)[#counter(page).display("1")],
+        columns: (1fr, auto, 1.5fr),
+        align(left)[#course-name],
+        align(center)[#counter(page).display("1/1", both: true)],
         align(right)[#footer-right],
       )
     ]
@@ -223,15 +226,17 @@
   body
 }
 
-/// タイムテーブル作成用テーブル関数
+/// タイムテーブル作成用テーブル関数（行途中の改ページ分断を防止）
 #let timeline-table(..rows) = {
   set table(
     stroke: 0.5pt + black,
     fill: (col, row) => if row == 0 { header-bg } else { none },
   )
 
+  let unbreakable-rows = rows.pos().map(cell => table.cell(breakable: false)[#cell])
+
   table(
-    columns: (58pt, 44pt, 68pt, 50pt, 1fr),
+    columns: (52pt, 48pt, 70pt, 62pt, 1fr),
     align: (col, row) => (
       if row == 0 { center + horizon }
       else if col == 0 { center + horizon }
@@ -247,6 +252,6 @@
       [*参加者のマインド*],
       [*指導者・スタッフの動き / 演出・留意点*],
     ),
-    ..rows
+    ..unbreakable-rows
   )
 }

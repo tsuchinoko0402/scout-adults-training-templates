@@ -15,9 +15,10 @@
   label: "ワーク記入欄",
   hint: none,
 ) = {
-  v(6pt)
+  v(4pt)
   block(
     width: 100%,
+    breakable: false,
     stroke: 0.8pt + black,
     radius: 0pt,
     fill: rgb("#ffffff"),
@@ -27,19 +28,19 @@
       #rect(
         width: 100%,
         fill: gray-light,
-        inset: (x: 10pt, y: 6pt),
+        inset: (x: 8pt, y: 5pt),
         stroke: (bottom: 0.6pt + black),
       )[
-        #text(9pt, weight: "bold", fill: black)[#label]
+        #text(8.5pt, weight: "bold", fill: black)[#label]
         #if hint != none [
-          #h(8pt)
-          #text(8pt, fill: gray-dark)[（#hint）]
+          #h(6pt)
+          #text(7.5pt, fill: gray-dark)[（#hint）]
         ]
       ]
       #v(height)
     ]
   )
-  v(6pt)
+  v(4pt)
 }
 
 /// 指導者訓練用配布資料の共通テンプレート関数（白黒印刷対応）
@@ -54,13 +55,14 @@
   subtitle: none,
   course-name: "",
   trainer-name: "",
+  trainer-label: "担当講師:",
   date: "",
   body,
 ) = {
   // ページ基本設定
   set page(
     paper: "a4",
-    margin: (left: 18mm, right: 18mm, top: 18mm, bottom: 18mm),
+    margin: (left: 15mm, right: 15mm, top: 14mm, bottom: 14mm),
     header: align(right)[
       #text(8pt, fill: gray-dark)[#course-name #if date != "" [| #date]]
     ],
@@ -77,14 +79,14 @@
   // 日本語フォント設定（白黒テキスト）
   set text(
     font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
-    size: 10pt,
+    size: 9pt,
     fill: black,
     lang: "ja",
   )
 
   // 段落設定
   set par(
-    leading: 0.7em,
+    leading: 0.58em,
     justify: true,
   )
 
@@ -92,30 +94,31 @@
   show heading.where(level: 1): it => block(
     width: 100%,
     stroke: (bottom: 1.2pt + black),
-    inset: (bottom: 3pt),
-    above: 14pt,
-    below: 8pt,
+    inset: (bottom: 2pt),
+    above: 9pt,
+    below: 5pt,
   )[
-    #text(fill: black, weight: "bold", size: 12pt)[#it.body]
+    #text(fill: black, weight: "bold", size: 10.5pt)[#it.body]
   ]
 
   show heading.where(level: 2): it => block(
-    above: 10pt,
-    below: 6pt,
+    above: 7pt,
+    below: 3pt,
   )[
-    #text(fill: black, weight: "bold", size: 10.5pt)[● #it.body]
+    #text(fill: black, weight: "bold", size: 9.5pt)[● #it.body]
   ]
 
   show heading.where(level: 3): it => block(
-    above: 8pt,
-    below: 4pt,
+    above: 5pt,
+    below: 2pt,
   )[
-    #text(fill: black, weight: "bold", size: 10pt)[▲ #it.body]
+    #text(fill: black, weight: "bold", size: 9pt)[▲ #it.body]
   ]
 
   // 表スタイル（白黒・グレー網掛け）
   set table(
     stroke: 0.5pt + black,
+    inset: (x: 6pt, y: 4.5pt),
     fill: (_, row) => if row == 0 { gray-light } else { none },
   )
 
@@ -124,40 +127,40 @@
   // --------------------------------------------------
   grid(
     columns: (1fr, auto),
-    gutter: 14pt,
+    gutter: 10pt,
     align: (left + horizon, right + top),
     [
       #if course-name != "" [
-        #text(9pt, fill: gray-dark, weight: "bold")[#course-name]
-        #v(2pt)
+        #text(8.5pt, fill: gray-dark, weight: "bold")[#course-name]
+        #v(1pt)
       ]
-      #text(16pt, fill: black, weight: "bold")[#title]
+      #text(15pt, fill: black, weight: "bold")[#title]
       #if subtitle != none [
-        #v(2pt)
-        #text(10pt, fill: gray-dark)[#subtitle]
+        #v(1pt)
+        #text(9pt, fill: gray-dark)[#subtitle]
       ]
     ],
     [
       #rect(
         stroke: 0.8pt + black,
         radius: 0pt,
-        inset: (x: 10pt, y: 7pt),
+        inset: (x: 8pt, y: 5pt),
         fill: rgb("#ffffff"),
       )[
-        #set text(8.5pt)
+        #set text(8pt)
         #grid(
-          columns: (auto, 90pt),
+          columns: (auto, auto),
           align: (left + horizon, left + horizon),
-          gutter: 5pt,
-          [担当トレーナー:], [#if trainer-name != "" { trainer-name } else { line(length: 60pt, stroke: 0.5pt + black) }],
-          [班名 / 所属:], [#line(length: 50pt, stroke: 0.5pt + black) 班],
-          [受講者氏名:], [#line(length: 75pt, stroke: 0.5pt + black)],
+          gutter: 4.5pt,
+          [#trainer-label], [#if trainer-name != "" { trainer-name } else { line(length: 110pt, stroke: 0.5pt + black) }],
+          [班名 / 所属:], [#box[#line(length: 115pt, stroke: 0.5pt + black)] 班],
+          [受講者氏名:], [#line(length: 135pt, stroke: 0.5pt + black)],
         )
       ]
     ]
   )
 
-  v(8pt)
+  v(5pt)
   line(length: 100%, stroke: 0.8pt + black)
   v(8pt)
 

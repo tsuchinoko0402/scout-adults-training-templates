@@ -368,6 +368,20 @@ section.lead-bs h2 {
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
+section.lead h3,
+section.lead-bs h3,
+section.lead-bvs h3,
+section.lead-cs h3,
+section.lead-vs h3,
+section.lead-rs h3 {
+  color: #ffffff;
+  font-size: 1.18em;
+  font-weight: 600;
+  margin-top: 0.2em;
+  margin-bottom: 0.5em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
 section.lead p,
 section.lead-bs p {
   color: #ffffff;
