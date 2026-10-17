@@ -1,12 +1,13 @@
 #import "/templates/session-doc-template.typ": session-plan, timeline-table
+#let cfg = toml("session.toml")
 
 #show: session-plan.with(
-  course-name: "20xx年度 指導者研修コース",
-  document-type: "セッションの進め方",
-  session-id: "§1",
-  title: "セッション名（サンプル）",
-  datetime-info: "20xx年〇月〇日(〇) 00:00〜00:45 (45分)",
-  trainer-name: "指導 太郎",
+  course-name: cfg.course_name,
+  document-type: cfg.files.plan.label,
+  session-id: cfg.session_id,
+  title: cfg.title,
+  datetime-info: cfg.datetime_info,
+  trainer-name: cfg.trainer_name,
 )
 
 = 指導上のねらい

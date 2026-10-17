@@ -20,12 +20,13 @@
    * 日本連盟のスカウトグリーン（`#005940`）を基調とした Marp テーマ。
    * 部門別カラー（BVS/CS/BS/VS/RS）への切り替え、カードUI、2〜3カラム分割レイアウトを完備。
 
-3. **Makefile によるワンストップ自動化**
-   * 全成果物の PDF/HTML 一括ビルド、プレビュー、新規セッションの雛形複製をコマンド1発で実行できます。
+3. **Makefile と `session.toml` による提出用ファイル名の自動生成（`dist/`）**
+   * `session.toml` にセッション名・回次・枝番を設定するだけで、Google Drive 共有や主任講師提出用の正式ファイル名（例：`02-11_§2. 愉快なハイキング_口述要項_1156回BS講習会.pdf`）が `dist/` フォルダへ自動出力されます。
+   * 同時に Typst ドキュメント（要項・口述要項・配布資料）のヘッダー情報にも自動反映されるため、二重管理が不要です。
 
 ---
 
-## 📁 ディレクトリ構成
+## 📁 ディレクトリ構成（パターンA：セッションテーマ軸）
 
 ```text
 scout-trainer-template/
@@ -37,16 +38,32 @@ scout-trainer-template/
 ├── assets/
 │   ├── README.md                 # 公式画像素材のダウンロード案内と配置ガイド
 │   └── dummy-bg.svg              # 公式画像未配置時でも動作確認できるダミー背景
+├── scripts/
+│   └── session_tool.py           # session.toml 解析・dist/ 正式名出力・プリセット初期化
 ├── templates/
 │   ├── marp-scout-theme.css      # Marp用ボーイスカウト風カスタムテーマ（帯付き・上揃え）
 │   ├── handout-template.typ      # Typst用A4白黒受講者配布資料共通テンプレート
 │   └── session-doc-template.typ  # Typst用A4セッション要項・口述要項共通テンプレート
 ├── sessions/
-│   └── 00-sample-session/        # セッション雛形（汎用ダミープレースホルダー）
-│       ├── plan.md / plan.typ    # ① セッション要項
-│       ├── script.md / script.typ# ② 口述要項
-│       ├── slides.md             # ③ 投影スライド（Marp）
-│       └── handout.md / .typ     # ④ 受講者配布資料・ワークシート（白黒）
+│   ├── 00-sample-session/        # セッション雛形（汎用ダミープレースホルダー）
+│   └── 01-BS-Koshukai/           # ボーイスカウト講習会（テーマ軸整理）
+│       ├── 01-world-scouting/    # §1「世界に広がるボーイスカウト」
+│       ├── 02-pleasant-hiking/   # §2「愉快なハイキング」
+│       │   └── 2026-11-08-1156th-hyogo/
+│       │       ├── session.toml          # ★ セッション名・回次・枝番の設定ファイル
+│       │       ├── slides.md             # 投影スライド（Marp）
+│       │       ├── plan.md / plan.typ    # セッションの進め方（要項）
+│       │       ├── script.md / script.typ# 口述要項
+│       │       ├── safety-plan.typ       # 安全計画書（任意）
+│       │       └── dist/                 # ★ 自動生成される提出・Google Drive共有用フォルダ
+│       │           ├── 02-00_§2. 愉快なハイキング_スライド資料_1156回BS講習会.pdf
+│       │           ├── 02-00_§2. 愉快なハイキング_スライド資料_1156回BS講習会.html
+│       │           ├── 02-01_§2. 愉快なハイキング_セッションの進め方_1156回BS講習会.pdf
+│       │           ├── 02-11_§2. 愉快なハイキング_口述要項_1156回BS講習会.pdf
+│       │           └── 02-12_§2. 愉快なハイキング_安全計画書_1156回BS講習会.pdf
+│       ├── 03-what-is-scouting/  # §3「スカウティングって何だろう」
+│       ├── 04-supporting-people/ # §4「スカウティングを支える人たち」
+│       └── 05-future-of-youth/   # §5「青少年の未来のために」
 ├── Makefile                      # ビルド・プレビュー自動化コマンド
 ├── .gitignore
 ├── LICENSE                       # MIT License
@@ -98,19 +115,34 @@ cargo install --locked typst-cli
 
 | コマンド | 説明 |
 | :--- | :--- |
-| `make all SESSION=00-sample-session` | 全成果物（スライドPDF/HTML・配布資料・要項・口述）を一括出力 |
-| `make docs SESSION=00-sample-session` | 所長・主任講師提出書類（要項・口述・配布資料）を一括PDF出力 |
-| `make slides SESSION=00-sample-session` | 指定セッションのスライドを **PDF と HTML の両方で出力** |
-| `make slides-html SESSION=00-sample-session` | 指定セッションのスライドを HTML のみ出力（ブラウザ即上映用） |
-| `make slides-pdf SESSION=00-sample-session` | 指定セッションのスライドを PDF のみ出力 |
-| `make handout SESSION=00-sample-session` | 指定セッションの受講者配布資料を PDF 出力 |
-| `make plan SESSION=00-sample-session` | 指定セッションのセッション要項を PDF 出力 |
-| `make script SESSION=00-sample-session` | 指定セッションの口述要項を PDF 出力 |
-| `make preview SESSION=00-sample-session` | 発表者ツール付き Marp プレビューサーバーを起動 |
-| `make new SESSION=01-patrol-system` | `00-sample-session` を複製して新しいセッションフォルダを作成（階層ディレクトリも自動作成） |
+| `make all SESSION=<dir>` | 全成果物を一括ビルドし、**`dist/` に正式ファイル名で整理** |
+| `make docs SESSION=<dir>` | 提出書類（要項・口述・配布資料・安全計画書）を一括PDF出力し `dist/` に整理 |
+| `make dist SESSION=<dir>` | ビルド済み成果物を `session.toml` に基づき `dist/` へ正式名コピー |
+| `make slides SESSION=<dir>` | 指定セッションのスライドを **PDF と HTML の両方で出力** |
+| `make slides-html SESSION=<dir>` | 指定セッションのスライドを HTML のみ出力（ブラウザ即上映用） |
+| `make slides-pdf SESSION=<dir>` | 指定セッションのスライドを PDF のみ出力 |
+| `make handout SESSION=<dir>` | 指定セッションの受講者配布資料を PDF 出力（存在しない場合は自動スキップ） |
+| `make plan SESSION=<dir>` | 指定セッションのセッション要項を PDF 出力 |
+| `make script SESSION=<dir>` | 指定セッションの口述要項を PDF 出力 |
+| `make safety-plan SESSION=<dir>` | 指定セッションの安全計画書を PDF 出力（存在する場合のみ） |
+| `make preview SESSION=<dir>` | 発表者ツール付き Marp プレビューサーバーを起動 |
+| `make new SESSION=<dir> [PRESET=bs1..bs5]` | 新規セッションを作成（BS講習会プリセット・パスから日付と回次を自動設定） |
 | `make assets` | 日本連盟公式PRツール素材（壁紙・ロゴ）を `assets/` へ自動ダウンロード |
 | `make clean-assets` | ダウンロードした公式PRツール素材を削除（初期ダミー状態へ復元） |
-| `make clean` | 生成された PDF / HTML ファイルを一括削除 |
+| `make clean` | 生成された PDF / HTML / `dist/` を一括削除 |
+
+### 💡 BS講習会プリセットを使った新規セッション作成例
+
+フォルダパスに `01-world-scouting`〜`05-future-of-youth` や日付・回次（`2026-11-08-1156th-hyogo` 等）を含めて `make new` を実行すると、該当セッションのタイトル・所要時間・回次・日付が自動的にセットされた `session.toml` と `slides.md` が生成されます。
+
+```bash
+# §3「スカウティングって何だろう」を新規作成（パスから §3・日付・1156回を自動判定）
+make new SESSION=01-BS-Koshukai/03-what-is-scouting/2026-11-08-1156th-hyogo TRAINER="岡﨑 正悟"
+
+# 明示的にプリセット（bs1〜bs5）や講習会名を指定して作成することも可能
+make new SESSION=01-BS-Koshukai/custom-folder PRESET=bs2 EVENT="1156回BS講習会"
+```
+※ カリキュラム改定等でセッション名や枝番が変わった場合も、生成された `session.toml` を書き換えるだけで自在に変更できます。
 
 ---
 
@@ -322,8 +354,8 @@ git remote add upstream https://github.com/tsuchinoko0402/scout-adults-training-
 # 2. 親テンプレートの最新情報を取得
 git fetch upstream
 
-# 3. templates/ や Makefile などの共通仕組みのみをピンポイントで取り込む
-git checkout upstream/main -- templates/ Makefile .github/
+# 3. templates/ や scripts/、Makefile などの共通仕組みのみをピンポイントで取り込む
+git checkout upstream/main -- templates/ scripts/ Makefile .github/
 
 # 4. 変更内容を確認してコミット
 git status

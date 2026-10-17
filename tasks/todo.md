@@ -50,3 +50,21 @@
 - [x] 公式 PRツールダウンロードセンターの規約・ガイドライン確認完了
 - [x] `README.md` および `assets/README.md` への公式素材ダウンロード先リンク反映完了
 - [x] Gitステータス確認・全構成ファイルの整合性検証完了
+
+---
+
+## 7. セッション設定ファイル (`session.toml`)・提出用ファイル名自動整理 (`dist/`)・プリセット機能
+
+### TDD TODO リスト（優先度・小スコープ順）
+- [x] **Test 1 (ファイル名フォーマット生成)**: `session.toml` のメタデータ（`section_no`, `session_name`, `event_short`）とファイル定義（`sub_no`, `label`）から、`02-00_§2. 愉快なハイキング_スライド資料_1156回BS講習会.pdf` の形式のファイル名が正確に生成されること
+- [x] **Test 2 (`dist/` への成果物エクスポート)**: セッションディレクトリ内にビルド済みファイル（`slides.pdf`, `slides.html`, `plan.pdf`, `script.pdf`, `safety-plan.pdf` 等）が存在するとき、`dist/` ディレクトリへ正式ファイル名でコピーされ、存在しないソース（例：削除済みの `handout.typ`）はエラーにならずスキップされること
+- [x] **Test 3 (BS講習会プリセット解決・`session.toml` 初期化)**: セッションパス（`01-world-scouting`〜`05-future-of-youth`）またはプリセット指定（`bs1`〜`bs5`）から、BS講習会の各セッション名・時間・番号が設定された `session.toml` が生成されること（カスタム名の上書きも可能であること）
+
+### 統合・リポジトリ反映タスク
+- [x] `sessions/00-sample-session/session.toml` の作成と、`plan.typ` / `script.typ` / `handout.typ` での `toml("session.toml")` 連携
+- [x] `Makefile` に `dist` ターゲット（`make all` 連動）および `make new` のプリセット対応を組み込み
+- [x] `shogo-okazaki-adults-training-session` リポジトリへの同期：
+  - `01-pleasant-hiking` を `02-pleasant-hiking`（パターンA）へ移動
+  - `2026-11-08-1156th-hyogo/session.toml` 作成・Typstヘッダー連携
+  - `make all` 実行による `dist/` 出力ファイルの検証
+

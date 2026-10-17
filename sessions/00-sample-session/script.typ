@@ -1,10 +1,11 @@
 #import "/templates/session-doc-template.typ": session-script, script-table, script-item
+#let cfg = toml("session.toml")
 
 #show: session-script.with(
-  course-name: "20xx年度 指導者研修コース",
-  session-id: "§1",
-  title: "セッション名（サンプル）",
-  trainer-name: "指導 太郎",
+  course-name: cfg.course_name,
+  session-id: cfg.session_id,
+  title: cfg.title,
+  trainer-name: cfg.trainer_name,
 )
 
 #script-table(

@@ -1,11 +1,12 @@
 #import "/templates/handout-template.typ": scout-handout, worksheet-box
+#let cfg = toml("session.toml")
 
 #show: scout-handout.with(
-  title: "セッション名（サンプル）",
+  title: cfg.title,
   subtitle: "サブタイトルをここに記載します",
-  course-name: "20xx年度 指導者研修コース",
-  trainer-name: "指導 太郎",
-  date: "20xx年〇月〇日",
+  course-name: cfg.course_name,
+  trainer-name: cfg.trainer_name,
+  date: cfg.date,
 )
 
 = 1. セッションのねらい

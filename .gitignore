@@ -1,6 +1,9 @@
 # Build artifacts
 *.pdf
 *.html
+sessions/**/dist/
+__pycache__/
+*.pyc
 !sessions/**/slides.md
 !sessions/**/handout.typ
 
