@@ -248,8 +248,14 @@
   body
 }
 
-/// セッション展開表作成用テーブル関数（3列仕様：時間(所要) / 内容・進行ステップ / 準備品・教材）
-#let timeline-table(..rows) = {
+/// セッション展開表作成用テーブル関数
+/// - columns: 列数（3: 新標準[時間(所要) / 内容 / 準備品]、4: [時間 / 所要 / ステップ / 内容]、5: [時間 / 所要 / ステップ / マインド / 内容]）
+/// - has-mind: 旧互換用（true: 5列、false: 4列）
+#let timeline-table(
+  columns: auto,
+  has-mind: auto,
+  ..rows
+) = {
   set table(
     stroke: 0.5pt + black,
     fill: (col, row) => if row == 0 { header-bg } else { none },
@@ -257,21 +263,71 @@
 
   let unbreakable-rows = rows.pos().map(cell => table.cell(breakable: false)[#cell])
 
-  table(
-    columns: (68pt, 1fr, 110pt),
-    align: (col, row) => (
-      if row == 0 { center + horizon }
-      else if col == 0 { center + top }
-      else if col == 2 { left + top }
-      else { left + top }
-    ),
-    table.header(
-      [*時間（所要）*],
-      [*内容・進行ステップ*],
-      [*準備品・教材*],
-    ),
-    ..unbreakable-rows
-  )
+  let col-mode = if columns != auto {
+    columns
+  } else if has-mind == true {
+    5
+  } else if has-mind == false {
+    4
+  } else {
+    3
+  }
+
+  if col-mode == 3 {
+    table(
+      columns: (68pt, 1fr, 110pt),
+      align: (col, row) => (
+        if row == 0 { center + horizon }
+        else if col == 0 { center + top }
+        else if col == 2 { left + top }
+        else { left + top }
+      ),
+      table.header(
+        [*時間（所要）*],
+        [*内容・進行ステップ*],
+        [*準備品・教材*],
+      ),
+      ..unbreakable-rows
+    )
+  } else if col-mode == 4 {
+    table(
+      columns: (54pt, 48pt, 80pt, 1fr),
+      align: (col, row) => (
+        if row == 0 { center + horizon }
+        else if col == 0 { center + horizon }
+        else if col == 1 { center + horizon }
+        else if col == 2 { left + top }
+        else { left + top }
+      ),
+      table.header(
+        [*時間配分*],
+        [*所要時間*],
+        [*展開ステップ*],
+        [*指導者・スタッフの動き / 演出・留意点*],
+      ),
+      ..unbreakable-rows
+    )
+  } else {
+    table(
+      columns: (52pt, 48pt, 70pt, 62pt, 1fr),
+      align: (col, row) => (
+        if row == 0 { center + horizon }
+        else if col == 0 { center + horizon }
+        else if col == 1 { center + horizon }
+        else if col == 2 { left + top }
+        else if col == 3 { center + top }
+        else { left + top }
+      ),
+      table.header(
+        [*時間配分*],
+        [*所要時間*],
+        [*展開ステップ*],
+        [*参加者のマインド*],
+        [*指導者・スタッフの動き / 演出・留意点*],
+      ),
+      ..unbreakable-rows
+    )
+  }
 }
 
 // ==============================================================================
