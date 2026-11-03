@@ -5,6 +5,7 @@
   course-name: cfg.course_name,
   session-id: cfg.session_id,
   title: cfg.title,
+  date: cfg.date,
   trainer-name: cfg.trainer_name,
 )
 

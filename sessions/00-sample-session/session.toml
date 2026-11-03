@@ -7,17 +7,29 @@ section_no    = "01"
 session_id    = "§1"
 title         = "セッション名（サンプル）"
 session_name  = "§1. セッション名（サンプル）"
-event_short   = "〇〇回BS講習会"
+event_short   = "指導者研修"
 
-# ドキュメント（要項・口述要項・配布資料）ヘッダー用メタデータ
-course_name   = "20xx年度 指導者研修コース"
-date          = "20xx年〇月〇日"
-datetime_info = "20xx年〇月〇日(〇) 00:00〜00:45 (45分)"
+# ドキュメント（要項・口述要項・配布資料・計画書）ヘッダー用メタデータ
+course_name   = "2026年度 指導者研修コース"
+date          = "2026年10月10日"
+datetime_info = "2026年10月10日(土) 10:00〜10:45 (45分)"
+role_name     = "きつつき班"
 trainer_name  = "指導 太郎"
 
 # ==============================================================================
 # 提出・Google Drive共有用ファイル出力定義 (dist/)
 # 出力形式: {section_no}-{sub_no}_{session_name}_{label}_{event_short}.{ext}
+#
+# 【連番（sub_no）体系ルール】
+# 00番台: セッション基本パッケージ（登壇・受講セット）
+#   - 00: スライド資料 (Must)
+#   - 01: セッションの進め方 (Must)
+#   - 02: 口述要項 (Must)
+#   - 03: 受講者配布資料 (Optional: ワークシート等)
+# 10番台: 展開用付属書類・現場計画書セット（セッション実務・スタッフ連携）
+#   - 11: 隊集会実施計画書 (Optional: セッションの展開で必要な場合)
+#   - 12: 所員への依頼書 (Optional: 班担当所員等へ具体的指示がある場合)
+#   - 13: 安全計画書 (Optional: 野外活動・安全管理を伴う場合)
 # ==============================================================================
 
 [files.slides]
@@ -37,5 +49,15 @@ source = "script.typ"
 
 [files.handout]
 sub_no = "03"
-label  = "配布資料"
+label  = "受講者配布資料"
 source = "handout.typ"
+
+[files.troop_plan]
+sub_no = "11"
+label  = "隊集会実施計画書"
+source = "troop-plan.typ"
+
+[files.staff_guide]
+sub_no = "12"
+label  = "所員への依頼書"
+source = "staff-guide.typ"

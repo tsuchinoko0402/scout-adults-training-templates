@@ -1,52 +1,75 @@
 // ボーイスカウト指導者訓練向け
-// セッション要項（セッションの進め方）および 口述要項用 Typst 共通テンプレート
+// セッション要項（セッションの進め方）、口述要項、および各種付属計画書用 Typst 共通テンプレート
 
 #let border-gray = luma(180)
 #let header-bg = luma(235)
+
+// ==============================================================================
+// 共通内部ヘルパー関数
+// ==============================================================================
+
+/// 統一ヘッダー・フッターをページ設定に適用する内部ヘルパー
+#let _apply-session-page-style(
+  course-name: "",
+  session-label: "",
+  date: "",
+  trainer-name: "",
+) = (
+  paper: "a4",
+  margin: (left: 15mm, right: 15mm, top: 15mm, bottom: 15mm),
+  header: context {
+    // 2ページ目以降に上部ヘッダーを表示（1ページ目は本文タイトルと重複するため非表示）
+    if counter(page).get().first() > 1 [
+      #set text(size: 8pt, fill: luma(80), font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
+      #grid(
+        columns: (1fr, auto),
+        align(left)[#course-name],
+        align(right)[#date],
+      )
+      #v(-3pt)
+      #line(length: 100%, stroke: 0.4pt + border-gray)
+    ]
+  },
+  footer: context [
+    #line(length: 100%, stroke: 0.4pt + border-gray)
+    #v(-2pt)
+    #set text(size: 8pt, fill: luma(60), font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
+    #grid(
+      columns: (1.2fr, 1fr, 1.2fr),
+      align(left)[#session-label],
+      align(center)[#counter(page).display("1 / 1", both: true)],
+      align(right)[#if trainer-name != "" [担当：#trainer-name]],
+    )
+  ],
+)
 
 // ==============================================================================
 // 1. 口述要項テンプレート (session-script)
 // ==============================================================================
 
 /// 口述要項の全体レイアウト関数
-/// - course-name: コース名（例: "WB研修所 スカウトコース 兵庫第xx期"）
-/// - session-id: セッション番号・記号（例: "§5"）
-/// - title: セッション名（例: "スカウト運動"）
-/// - trainer-name: 担当者名（例: "岡﨑正悟"）
+/// - course-name: コース名（例: "第1156回ボーイスカウト講習会"）
+/// - session-id: セッション番号・記号（例: "§1"）
+/// - title: セッション名（例: "世界に広がるボーイスカウト"）
+/// - date: 実施日（例: "2026年11月8日"）
+/// - trainer-name: 担当者氏名（例: "岡﨑 正悟"）
 /// - body: 本文（script-table 等）
 #let session-script(
   course-name: "",
   session-id: "",
   title: "",
+  date: "",
   trainer-name: "",
   body,
 ) = {
   let session-label = if session-id != "" [#session-id. #title] else [#title]
-  let footer-right = if trainer-name != "" [#session-label ｜ #trainer-name] else [#session-label]
 
-  set page(
-    paper: "a4",
-    margin: (left: 14mm, right: 14mm, top: 14mm, bottom: 14mm),
-    header: context {
-      if counter(page).get().first() > 1 [
-        #set text(size: 8.5pt, fill: luma(60))
-        #grid(
-          columns: (1fr, auto),
-          align(left)[#course-name #session-label],
-          align(right)[担当：#trainer-name],
-        )
-      ]
-    },
-    footer: context [
-      #set text(size: 8pt, font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
-      #grid(
-        columns: (1fr, auto, 1.5fr),
-        align(left)[#course-name],
-        align(center)[#counter(page).display("1/1", both: true)],
-        align(right)[#footer-right],
-      )
-    ]
-  )
+  set page(.._apply-session-page-style(
+    course-name: course-name,
+    session-label: session-label,
+    date: date,
+    trainer-name: trainer-name,
+  ))
 
   set text(
     font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
@@ -65,12 +88,12 @@
     #grid(
       columns: (1fr, auto),
       align: (left, right),
-      [#text(8.5pt)[#course-name #session-label]],
-      [#text(8.5pt)[担当：#trainer-name]]
+      [#text(8.5pt, fill: luma(80))[#course-name #session-label]],
+      [#text(8.5pt, fill: luma(80))[#if date != "" [#date#h(8pt)]#if trainer-name != "" [担当：#trainer-name]]]
     )
-    #v(1pt)
+    #v(2pt)
     #align(center)[
-      #text(12.5pt, weight: "bold")[口述要項]
+      #text(13pt, weight: "bold")[口述要項]
     ]
   ]
 
@@ -119,47 +142,39 @@
   ],
 )
 
-
 // ==============================================================================
 // 2. セッション要項 / セッションの進め方テンプレート (session-plan)
 // ==============================================================================
 
 /// セッション要項（セッションの進め方）の全体レイアウト関数
 /// - course-name: コース名（例: "第1156回ボーイスカウト講習会"）
-/// - document-type: 文書種別（デフォルト: "セッションの進め方"、"セッション要項" も可）
-/// - session-id: セッション番号（例: "§2"）
-/// - title: セッションタイトル（例: "愉快なハイキング"）
-/// - datetime-info: 実施日時・時間（例: "2026年11月8日(日) 10:45〜13:35 (170分)"）
-/// - trainer-name: 担当者名（例: "岡﨑正悟"）
+/// - document-type: 文書種別（デフォルト: "セッションの進め方"）
+/// - session-id: セッション番号（例: "§1"）
+/// - title: セッションタイトル（例: "世界に広がるボーイスカウト"）
+/// - date: 実施日（例: "2026年11月8日"）
+/// - datetime-info: 実施日時・時間（例: "2026年11月8日(日) 10:00〜10:40 (40分)"）
+/// - role-name: 担当班・役務（例: "きつつき班"）※大要ヘッダー部にのみ表示
+/// - trainer-name: 担当者氏名（例: "岡﨑 正悟"）※フッターおよび大要に表示
 /// - body: 本文
 #let session-plan(
   course-name: "",
   document-type: "セッションの進め方",
   session-id: "",
   title: "",
+  date: "",
   datetime-info: "",
+  role-name: "",
   trainer-name: "",
   body,
 ) = {
   let session-label = if session-id != "" [#session-id. #title] else [#title]
-  let footer-right = if trainer-name != "" [#session-label ｜ #trainer-name] else [#session-label]
 
-  set page(
-    paper: "a4",
-    margin: (left: 16mm, right: 16mm, top: 16mm, bottom: 16mm),
-    header: align(left)[
-      #text(8.5pt, fill: luma(60))[#course-name]
-    ],
-    footer: context [
-      #set text(size: 8pt, font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
-      #grid(
-        columns: (1fr, auto, 1.5fr),
-        align(left)[#course-name],
-        align(center)[#counter(page).display("1/1", both: true)],
-        align(right)[#footer-right],
-      )
-    ]
-  )
+  set page(.._apply-session-page-style(
+    course-name: course-name,
+    session-label: session-label,
+    date: date,
+    trainer-name: trainer-name,
+  ))
 
   set text(
     font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
@@ -169,7 +184,7 @@
   )
 
   set par(
-    leading: 0.65em,
+    leading: 0.6em,
     justify: true,
   )
 
@@ -177,35 +192,166 @@
   show heading.where(level: 1): it => block(
     width: 100%,
     stroke: (bottom: 1.2pt + black),
-    inset: (bottom: 3pt),
-    above: 14pt,
-    below: 8pt,
+    inset: (bottom: 2.5pt),
+    above: 12pt,
+    below: 6pt,
   )[
-    #text(weight: "bold", size: 11pt)[#it.body]
+    #text(weight: "bold", size: 10.5pt)[#it.body]
   ]
 
   // レベル2見出し：点線下線
   show heading.where(level: 2): it => block(
     width: 100%,
     stroke: (bottom: (paint: black, thickness: 0.8pt, dash: "dashed")),
-    inset: (bottom: 3pt),
-    above: 11pt,
-    below: 6pt,
+    inset: (bottom: 2.5pt),
+    above: 9pt,
+    below: 5pt,
   )[
-    #text(weight: "bold", size: 10pt)[#it.body]
+    #text(weight: "bold", size: 9.5pt)[#it.body]
   ]
 
   // タイトル部
-  v(2pt)
-  text(18pt, weight: "bold")[#document-type]
   v(1pt)
-  line(length: 100%, stroke: 1.8pt + black)
-  v(6pt)
+  text(16pt, weight: "bold")[#document-type]
+  v(1pt)
+  line(length: 100%, stroke: 1.5pt + black)
+  v(4pt)
 
   // セッション名（枠囲み）
   rect(
     stroke: 1pt + black,
-    inset: (x: 10pt, y: 7pt),
+    inset: (x: 10pt, y: 6pt),
+    width: 100%,
+    radius: 0pt,
+  )[
+    #text(12pt, weight: "bold")[#if session-id != "" [#session-id ] #title]
+  ]
+
+  v(2pt)
+
+  // 日時と担当者（1ページ目大要部）
+  grid(
+    columns: (1fr, auto),
+    align: (left + horizon, right + horizon),
+    [#if datetime-info != "" [#text(9pt)[#datetime-info]]],
+    [#text(9pt)[
+      #if role-name != "" [担当：#role-name#h(8pt)]
+      #if trainer-name != "" [氏名：#trainer-name]
+    ]],
+  )
+
+  v(6pt)
+
+  body
+}
+
+/// セッション展開表作成用テーブル関数（3列仕様：時間(所要) / 内容・進行ステップ / 準備品・教材）
+#let timeline-table(..rows) = {
+  set table(
+    stroke: 0.5pt + black,
+    fill: (col, row) => if row == 0 { header-bg } else { none },
+  )
+
+  let unbreakable-rows = rows.pos().map(cell => table.cell(breakable: false)[#cell])
+
+  table(
+    columns: (68pt, 1fr, 110pt),
+    align: (col, row) => (
+      if row == 0 { center + horizon }
+      else if col == 0 { center + top }
+      else if col == 2 { left + top }
+      else { left + top }
+    ),
+    table.header(
+      [*時間（所要）*],
+      [*内容・進行ステップ*],
+      [*準備品・教材*],
+    ),
+    ..unbreakable-rows
+  )
+}
+
+// ==============================================================================
+// 3. 汎用公用文書テンプレート (session-doc) ★新設
+// 「所員への依頼書」「隊集会実施計画書」「安全計画書」等の付属・関連書類で共通利用
+// ==============================================================================
+
+/// 汎用公用文書の全体レイアウト関数
+/// - course-name: コース名
+/// - document-type: 文書種別（例: "所員への依頼書", "隊集会実施計画書", "安全計画書"）
+/// - session-id: セッション番号（例: "§1"）
+/// - title: セッションタイトル（例: "班長訓練"）
+/// - date: 実施日
+/// - datetime-info: 日時情報
+/// - role-name: 担当班・役務（任意）
+/// - trainer-name: 担当者氏名
+/// - body: 本文コンテンツ
+#let session-doc(
+  course-name: "",
+  document-type: "公用文書",
+  session-id: "",
+  title: "",
+  date: "",
+  datetime-info: "",
+  role-name: "",
+  trainer-name: "",
+  body,
+) = {
+  let session-label = if session-id != "" [#session-id. #title] else [#title]
+
+  set page(.._apply-session-page-style(
+    course-name: course-name,
+    session-label: session-label,
+    date: date,
+    trainer-name: trainer-name,
+  ))
+
+  set text(
+    font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
+    size: 9.5pt,
+    fill: rgb("#000000"),
+    lang: "ja",
+  )
+
+  set par(
+    leading: 0.6em,
+    justify: true,
+  )
+
+  // レベル1見出し
+  show heading.where(level: 1): it => block(
+    width: 100%,
+    stroke: (bottom: 1.2pt + black),
+    inset: (bottom: 2.5pt),
+    above: 12pt,
+    below: 6pt,
+  )[
+    #text(weight: "bold", size: 10.5pt)[#it.body]
+  ]
+
+  // レベル2見出し
+  show heading.where(level: 2): it => block(
+    width: 100%,
+    stroke: (bottom: (paint: black, thickness: 0.8pt, dash: "dashed")),
+    inset: (bottom: 2.5pt),
+    above: 9pt,
+    below: 5pt,
+  )[
+    #text(weight: "bold", size: 9.5pt)[#it.body]
+  ]
+
+  // タイトル部
+  v(1pt)
+  text(16pt, weight: "bold")[#document-type]
+  v(1pt)
+  line(length: 100%, stroke: 1.5pt + black)
+  v(4pt)
+
+  // セッション名枠
+  rect(
+    stroke: 1pt + black,
+    inset: (x: 10pt, y: 6pt),
+    width: 100%,
     radius: 0pt,
   )[
     #text(12pt, weight: "bold")[#if session-id != "" [#session-id ] #title]
@@ -217,41 +363,14 @@
   grid(
     columns: (1fr, auto),
     align: (left + horizon, right + horizon),
-    [#if datetime-info != "" [#text(9.5pt)[#datetime-info]]],
-    [#if trainer-name != "" [#text(9.5pt)[担当：#trainer-name]]],
+    [#if datetime-info != "" [#text(9pt)[#datetime-info]]],
+    [#text(9pt)[
+      #if role-name != "" [担当：#role-name#h(8pt)]
+      #if trainer-name != "" [氏名：#trainer-name]
+    ]],
   )
 
-  v(8pt)
+  v(6pt)
 
   body
-}
-
-/// タイムテーブル作成用テーブル関数（行途中の改ページ分断を防止）
-#let timeline-table(..rows) = {
-  set table(
-    stroke: 0.5pt + black,
-    fill: (col, row) => if row == 0 { header-bg } else { none },
-  )
-
-  let unbreakable-rows = rows.pos().map(cell => table.cell(breakable: false)[#cell])
-
-  table(
-    columns: (52pt, 48pt, 70pt, 62pt, 1fr),
-    align: (col, row) => (
-      if row == 0 { center + horizon }
-      else if col == 0 { center + horizon }
-      else if col == 1 { center + horizon }
-      else if col == 2 { left + top }
-      else if col == 3 { center + top }
-      else { left + top }
-    ),
-    table.header(
-      [*時間配分*],
-      [*所要時間*],
-      [*展開ステップ*],
-      [*参加者のマインド*],
-      [*指導者・スタッフの動き / 演出・留意点*],
-    ),
-    ..unbreakable-rows
-  )
 }

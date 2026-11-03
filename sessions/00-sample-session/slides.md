@@ -6,6 +6,7 @@ header: '<span>20xx年度 指導者研修コース</span><span>§1. セッショ
 footer: '<span>20xx年〇月〇日</span><span><img src="../../assets/tagline_1line.png" class="footer-tagline" alt="" onerror="this.style.display=\x27none\x27" /></span>'
 ---
 
+<!-- Slide 1: 表紙 -->
 <!--
 _class: lead
 _paginate: false
@@ -27,6 +28,7 @@ _paginate: false
 
 ---
 
+<!-- Slide 2: セッションのねらい -->
 # セッションのねらい
 
 本セッションで受講者に持ち帰っていただく目標・到達指標をここに記載します。
@@ -43,6 +45,7 @@ _paginate: false
 
 ---
 
+<!-- Slide 3: 3つのポイント（3カラムカード） -->
 # 〇〇の「3つのポイント」
 
 <div class="columns-3">
@@ -74,6 +77,7 @@ _paginate: false
 
 ---
 
+<!-- Slide 4: ケーススタディ・グループ討議（2カラムカード） -->
 # ケーススタディ・グループ討議
 
 <div class="columns">
@@ -100,6 +104,7 @@ _paginate: false
 
 ---
 
+<!-- Slide 5: セッション展開タイムライン -->
 # セッション展開タイムライン
 
 本セッションの標準的な進行スケジュールです。
@@ -114,6 +119,7 @@ _paginate: false
 
 ---
 
+<!-- Slide 6: まとめ・結びのメッセージ -->
 <!--
 _class: divider
 _paginate: false

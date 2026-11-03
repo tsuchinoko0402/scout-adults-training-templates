@@ -48,7 +48,7 @@ PYTHON ?= $(shell \
 	fi \
 )
 
-.PHONY: help all slides slides-pdf slides-html handout plan script safety-plan docs dist preview new clean check-session assets clean-assets
+.PHONY: help all slides slides-pdf slides-html handout plan script safety-plan staff-guide troop-plan typst-all docs dist preview new clean check-session assets clean-assets
 
 # デフォルトターゲット：ヘルプ表示
 help:
@@ -64,22 +64,27 @@ help:
 	@echo "  make script      [DIR=<category>] SESSION=<dir>   指定セッションの口述要項 (Typst) を PDF 出力"
 	@echo "  make safety-plan [DIR=<category>] SESSION=<dir>   指定セッションの安全計画書 (Typst) を PDF 出力"
 	@echo "  make preview     [DIR=<category>] SESSION=<dir>   Marp プレビューサーバーを起動（発表者ノート付き）"
-	@echo "  make new         SESSION=<dir> [PRESET=bs1..bs5]  新規セッション作成（BS講習会プリセット・パス自動判定対応）"
+	@echo "  make new         SESSION=<dir> [PRESET=...] [PREF=開催県連名] [TERM=期番号]  新規セッション作成"
 	@echo "  make assets                                       日本連盟公式PRツール素材（壁紙・ロゴ）を assets/ へダウンロード"
 	@echo "  make clean-assets                                 ダウンロードした公式PRツール素材を assets/ から削除"
 	@echo "  make clean                                        生成された PDF / HTML / dist/ を削除"
 	@echo ""
-	@echo "BS講習会プリセット (make new 時に PRESET 指定またはフォルダ名から自動適用):"
-	@echo "  bs1 / 01-world-scouting    : §1. 世界に広がるボーイスカウト (40分)"
-	@echo "  bs2 / 02-pleasant-hiking   : §2. 愉快なハイキング (170分)"
-	@echo "  bs3 / 03-what-is-scouting  : §3. スカウティングって何だろう (70分)"
-	@echo "  bs4 / 04-supporting-people : §4. スカウティングを支える人たち (30分)"
-	@echo "  bs5 / 05-future-of-youth   : §5. 青少年の未来のために (40分)"
+	@echo "プリセット一覧 (make new 時に PRESET 指定またはフォルダ名から自動適用):"
+	@echo "  [01-BS-Koshukai: ボーイスカウト講習会]"
+	@echo "    bs1..bs5   : §1〜§5 (例: 01-world-scouting, 02-pleasant-hiking ...)"
+	@echo "  [02-WB-kenshusho-scout-course: WB研修所スカウトコース]"
+	@echo "    wb1..wb14  : §1〜§14 (§3-Ⅰ/Ⅱは wb3-1/wb3-2, §6-Ⅰ/Ⅱ/Ⅲは wb6-1..wb6-3)"
+	@echo "  [03-Dan-iin-kenshusho: 団委員研修所]"
+	@echo "    dan1..dan16: §1〜§16 (例: 01-about-dan-iin-kenshusho, 05-committee-organization-and-functions ...)"
 	@echo ""
-	@echo "例:"
-	@echo "  make all SESSION=00-sample-session"
+	@echo "例（自県連・他県連での新規セッション作成）:"
+	@echo "  # BS講習会（全国連番）:"
 	@echo "  make new SESSION=01-BS-Koshukai/02-pleasant-hiking/2026-11-08-1156th-hyogo"
-	@echo "  make all SESSION=01-BS-Koshukai/02-pleasant-hiking/2026-11-08-1156th-hyogo"
+	@echo "  # WB研修所スカウトコース（フォルダ名から兵庫県連・第20期を自動判定）:"
+	@echo "  make new SESSION=02-WB-kenshusho-scout-course/08-patrol-leaders-training/2026-11-21-wb-sc-20th-hyogo"
+	@echo "  # 他県連で実施する場合（PREFパラメータで県連名を明示指定可能）:"
+	@echo "  make new SESSION=02-WB-kenshusho-scout-course/08-patrol-leaders-training/2026-11-21-wb-sc-35th-osaka PREF=大阪"
+	@echo "  make new SESSION=03-Dan-iin-kenshusho/05-committee-organization-and-functions/2026-11-21-dan-12th-kyoto PREF=京都"
 
 # セッションディレクトリの存在確認
 check-session:
@@ -88,13 +93,24 @@ check-session:
 		exit 1; \
 	fi
 
-# 全成果物の一括ビルド（スライドPDF/HTML、配布資料、要項、口述、安全計画書）＋ dist/ への正式名出力
-all: slides handout plan script safety-plan dist
+# 全成果物の一括ビルド（スライドPDF/HTML、全Typst書類）＋ dist/ への正式名出力
+all: slides typst-all dist
 	@echo "✓ セッション [$(TARGET_SESSION)] の全成果物ビルドおよび dist/ 整理が完了しました。"
 
-# 所長・主任講師提出書類セット（要項・口述・配布資料・安全計画書）＋ dist/ への正式名出力
-docs: plan script handout safety-plan dist
-	@echo "✓ セッション [$(TARGET_SESSION)] の指導者提出書類（要項・口述・配布資料・安全計画書）のPDF生成が完了しました。"
+# 指導者提出書類セット（全Typst書類）＋ dist/ への正式名出力
+docs: typst-all dist
+	@echo "✓ セッション [$(TARGET_SESSION)] の指導者提出書類（Typst書類一式）のPDF生成が完了しました。"
+
+# セッションディレクトリ内の全 Typst ドキュメントを一括ビルド
+typst-all: check-session
+	@for f in $(SESSION_DIR)/*.typ; do \
+		if [ -f "$$f" ]; then \
+			pdf="$${f%.typ}.pdf"; \
+			echo "▶ Typst ドキュメントをビルド中: $$f -> $$pdf"; \
+			$(TYPST) compile --root . "$$f" "$$pdf"; \
+			echo "✓ PDF 生成完了: $$pdf"; \
+		fi \
+	done
 
 # session.toml に基づき dist/ ディレクトリへ提出・共有用ファイル名でエクスポート
 dist: check-session
@@ -156,6 +172,22 @@ safety-plan: check-session
 		echo "✓ 安全計画書 PDF 生成完了: $(SESSION_DIR)/safety-plan.pdf"; \
 	fi
 
+# Typst 所員への依頼書の PDF 出力
+staff-guide: check-session
+	@if [ -f "$(SESSION_DIR)/staff-guide.typ" ]; then \
+		echo "▶ 所員への依頼書をビルド中: $(SESSION_DIR)/staff-guide.typ -> $(SESSION_DIR)/staff-guide.pdf"; \
+		$(TYPST) compile --root . $(SESSION_DIR)/staff-guide.typ $(SESSION_DIR)/staff-guide.pdf; \
+		echo "✓ 所員への依頼書 PDF 生成完了: $(SESSION_DIR)/staff-guide.pdf"; \
+	fi
+
+# Typst 隊集会実施計画書の PDF 出力
+troop-plan: check-session
+	@if [ -f "$(SESSION_DIR)/troop-plan.typ" ]; then \
+		echo "▶ 隊集会実施計画書をビルド中: $(SESSION_DIR)/troop-plan.typ -> $(SESSION_DIR)/troop-plan.pdf"; \
+		$(TYPST) compile --root . $(SESSION_DIR)/troop-plan.typ $(SESSION_DIR)/troop-plan.pdf; \
+		echo "✓ 隊集会実施計画書 PDF 生成完了: $(SESSION_DIR)/troop-plan.pdf"; \
+	fi
+
 # Marp ローカルサーバー起動（発表者ツール付きプレビュー）
 preview: check-session
 	@echo "▶ プレビューサーバーを起動します (Ctrl+C で終了): $(SESSION_DIR)/slides.md"
@@ -180,6 +212,8 @@ new:
 		$(if $(PRESET),--preset "$(PRESET)",) \
 		$(if $(EVENT),--event "$(EVENT)",) \
 		$(if $(COURSE),--course "$(COURSE)",) \
+		$(if $(PREF),--pref "$(PREF)",) \
+		$(if $(TERM),--term "$(TERM)",) \
 		$(if $(TRAINER),--trainer "$(TRAINER)",)
 	@echo "✓ 新しいセッション雛形を作成しました: $(SESSION_DIR)"
 	@echo "  - $(SESSION_DIR)/session.toml            (セッション設定・出力ファイル名定義)"
