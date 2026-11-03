@@ -160,9 +160,9 @@
     ]
   )
 
-  v(5pt)
+  v(2pt)
   line(length: 100%, stroke: 0.8pt + black)
-  v(8pt)
+  v(5pt)
 
   // 本文展開
   body

@@ -210,12 +210,16 @@
     #text(weight: "bold", size: 9.5pt)[#it.body]
   ]
 
-  // タイトル部
-  v(1pt)
-  text(16pt, weight: "bold")[#document-type]
-  v(1pt)
-  line(length: 100%, stroke: 1.5pt + black)
-  v(4pt)
+  // タイトル部（文字のすぐ下に罫線を引き締め、離れすぎを解消）
+  block(
+    width: 100%,
+    stroke: (bottom: 1.5pt + black),
+    inset: (bottom: 2.5pt),
+    above: 0pt,
+    below: 5pt,
+  )[
+    #text(16pt, weight: "bold")[#document-type]
+  ]
 
   // セッション名（枠囲み）
   rect(
@@ -235,8 +239,7 @@
     align: (left + horizon, right + horizon),
     [#if datetime-info != "" [#text(9pt)[#datetime-info]]],
     [#text(9pt)[
-      #if role-name != "" [担当：#role-name#h(8pt)]
-      #if trainer-name != "" [氏名：#trainer-name]
+      #if role-name != "" [担当：#role-name#h(8pt)氏名：#trainer-name] else if trainer-name != "" [担当：#trainer-name]
     ]],
   )
 
@@ -340,12 +343,16 @@
     #text(weight: "bold", size: 9.5pt)[#it.body]
   ]
 
-  // タイトル部
-  v(1pt)
-  text(16pt, weight: "bold")[#document-type]
-  v(1pt)
-  line(length: 100%, stroke: 1.5pt + black)
-  v(4pt)
+  // タイトル部（文字のすぐ下に罫線を引き締め、離れすぎを解消）
+  block(
+    width: 100%,
+    stroke: (bottom: 1.5pt + black),
+    inset: (bottom: 2.5pt),
+    above: 0pt,
+    below: 5pt,
+  )[
+    #text(16pt, weight: "bold")[#document-type]
+  ]
 
   // セッション名枠
   rect(
@@ -365,8 +372,7 @@
     align: (left + horizon, right + horizon),
     [#if datetime-info != "" [#text(9pt)[#datetime-info]]],
     [#text(9pt)[
-      #if role-name != "" [担当：#role-name#h(8pt)]
-      #if trainer-name != "" [氏名：#trainer-name]
+      #if role-name != "" [担当：#role-name#h(8pt)氏名：#trainer-name] else if trainer-name != "" [担当：#trainer-name]
     ]],
   )
 
