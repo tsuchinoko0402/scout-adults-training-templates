@@ -446,11 +446,13 @@ def inline_html_assets(html_path: Path, base_dir: Path) -> bool:
     return False
 
 
-def export_session_dist(session_dir: Path) -> list[Path]:
+def export_session_dist(session_dir: Path, clean_intermediates: bool = False) -> list[Path]:
     """
     session.toml の定義に基づき、ビルド済み成果物を正式ファイル名で dist/ に出力する。
+    clean_intermediates が True の場合、エクスポート完了後にセッション直下の中間 PDF ファイルを削除する。
 
     @param session_dir 対象セッションディレクトリのパス
+    @param clean_intermediates エクスポート後にセッション直下の中間 PDF を削除するかどうか
     @returns dist/ に出力されたファイルの Path リスト
     """
     toml_path = session_dir / "session.toml"
@@ -476,6 +478,12 @@ def export_session_dist(session_dir: Path) -> list[Path]:
             if dest_path.suffix.lower() == ".html":
                 inline_html_assets(dest_path, session_dir)
             exported.append(dest_path)
+
+    # dist/ へのエクスポートが成功した場合のみ、セッション直下の不要な中間 PDF を安全に削除する
+    if clean_intermediates and exported:
+        for intermediate_pdf in session_dir.glob("*.pdf"):
+            if intermediate_pdf.is_file():
+                intermediate_pdf.unlink()
 
     return exported
 
@@ -690,6 +698,11 @@ def main(argv: list[str] | None = None) -> None:
 
     export_p = sub.add_parser("export", help="ビルド済み成果物を dist/ に正式ファイル名で出力")
     export_p.add_argument("session_dir", type=Path, help="セッションディレクトリのパス")
+    export_p.add_argument(
+        "--clean",
+        action="store_true",
+        help="エクスポート完了後にセッション直下の中間 PDF ファイルを削除する",
+    )
 
     bundle_p = sub.add_parser("bundle-html", help="HTML内のローカル画像をBase64にインライン化")
     bundle_p.add_argument("html_path", type=Path, help="対象HTMLファイルのパス")
@@ -707,10 +720,12 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     if args.command == "export":
-        files = export_session_dist(args.session_dir)
+        files = export_session_dist(args.session_dir, clean_intermediates=args.clean)
         print(f"▶ 提出・共有用ファイルを出力しました ({args.session_dir / 'dist'}):")
         for f in sorted(files):
             print(f"  ✓ {f.name}")
+        if args.clean:
+            print("✓ セッション直下の中間 PDF ファイルを削除しました（ソースおよび dist/ 内の成果物は保持）")
     elif args.command == "bundle-html":
         base_dir = args.base_dir or args.html_path.parent
         changed = inline_html_assets(args.html_path, base_dir)

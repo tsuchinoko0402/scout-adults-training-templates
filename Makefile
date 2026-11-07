@@ -48,14 +48,22 @@ PYTHON ?= $(shell \
 	fi \
 )
 
-.PHONY: help all slides slides-pdf slides-html handout plan script safety-plan staff-guide troop-plan typst-all docs dist preview new clean check-session assets clean-assets
+# dist 出力時の中間 PDF 自動クリーンアップ（1: 有効, 0: 無効）
+CLEAN ?= 1
+ifeq ($(CLEAN),1)
+  EXPORT_CLEAN_FLAG := --clean
+else
+  EXPORT_CLEAN_FLAG :=
+endif
+
+.PHONY: help all slides slides-pdf slides-html handout plan script safety-plan staff-guide troop-plan typst-all docs dist preview new clean clean-pdf check-session assets clean-assets
 
 # デフォルトターゲット：ヘルプ表示
 help:
 	@echo "ボーイスカウト指導者訓練 成果物管理コマンド一覧:"
-	@echo "  make all         [DIR=<category>] SESSION=<dir>   全成果物を一括ビルドし dist/ へ正式ファイル名で整理"
+	@echo "  make all         [DIR=<category>] SESSION=<dir>   全成果物を一括ビルドし dist/ へ正式ファイル名で整理（中間PDF自動削除）"
 	@echo "  make docs        [DIR=<category>] SESSION=<dir>   提出書類（要項・口述・配布資料・安全計画書）を一括PDF出力"
-	@echo "  make dist        [DIR=<category>] SESSION=<dir>   session.toml に基づき dist/ へ正式ファイル名でコピー出力"
+	@echo "  make dist        [DIR=<category>] SESSION=<dir>   session.toml に基づき dist/ へ正式ファイル名でコピー出力（中間PDF自動削除）"
 	@echo "  make slides      [DIR=<category>] SESSION=<dir>   指定セッションのスライド (Marp) を PDF と HTML の両方で出力"
 	@echo "  make slides-pdf  [DIR=<category>] SESSION=<dir>   指定セッションのスライドを PDF 出力"
 	@echo "  make slides-html [DIR=<category>] SESSION=<dir>   指定セッションのスライドを HTML 出力（ブラウザ上映用）"
@@ -67,6 +75,7 @@ help:
 	@echo "  make new         SESSION=<dir> [PRESET=...] [PREF=開催県連名] [TERM=期番号]  新規セッション作成"
 	@echo "  make assets                                       日本連盟公式PRツール素材（壁紙・ロゴ）を assets/ へダウンロード"
 	@echo "  make clean-assets                                 ダウンロードした公式PRツール素材を assets/ から削除"
+	@echo "  make clean-pdf   [DIR=<category>] SESSION=<dir>   指定セッション直下の中間 PDF のみ削除（dist/ は保持）"
 	@echo "  make clean                                        生成された PDF / HTML / dist/ を削除"
 	@echo ""
 	@echo "プリセット一覧 (make new 時に PRESET 指定またはフォルダ名から自動適用):"
@@ -112,10 +121,10 @@ typst-all: check-session
 		fi \
 	done
 
-# session.toml に基づき dist/ ディレクトリへ提出・共有用ファイル名でエクスポート
+# session.toml に基づき dist/ ディレクトリへ提出・共有用ファイル名でエクスポート（中間PDFを自動クリーンアップ）
 dist: check-session
 	@if [ -f "$(SESSION_DIR)/session.toml" ]; then \
-		$(PYTHON) scripts/session_tool.py export "$(SESSION_DIR)"; \
+		$(PYTHON) scripts/session_tool.py export "$(SESSION_DIR)" $(EXPORT_CLEAN_FLAG); \
 	fi
 
 # Marp スライドの一括出力（PDF & HTML の両方）
@@ -243,6 +252,12 @@ clean-assets:
 	@echo "▶ ダウンロードした公式アセットを削除しています..."
 	@rm -f assets/logo_*.png assets/tagline*.png assets/PCWall_*.png assets/PCWall_*.jpg
 	@echo "✓ 公式アセットの削除が完了しました（ダミー背景に戻りました）"
+
+# セッションディレクトリ直下の中間 PDF ファイルのみを削除（dist/ は保持）
+clean-pdf: check-session
+	@echo "▶ セッション直下の中間 PDF ファイルを削除しています: $(SESSION_DIR)"
+	@rm -f $(SESSION_DIR)/*.pdf
+	@echo "✓ 中間 PDF の削除完了（ソースおよび dist/ 内の成果物は保持されています）"
 
 # 生成物の削除
 clean:

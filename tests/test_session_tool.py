@@ -75,6 +75,82 @@ source = "handout.typ"
                 (dist_dir / "02-01_§2. 愉快なハイキング_セッションの進め方_1156回BS講習会.pdf").read_bytes(),
                 b"pdf-plan",
             )
+            # clean_intermediates=False (デフォルト) のため、元ファイルが残っていること
+            self.assertTrue((session_dir / "slides.pdf").is_file())
+            self.assertTrue((session_dir / "plan.pdf").is_file())
+
+    def test_export_session_dist_cleans_intermediate_pdfs_when_clean_is_true(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            session_dir = Path(tmpdir)
+            (session_dir / "session.toml").write_text(
+                """
+section_no = "02"
+session_name = "§2. 愉快なハイキング"
+event_short = "1156回BS講習会"
+
+[files.slides]
+sub_no = "00"
+label = "スライド資料"
+source = "slides.md"
+
+[files.plan]
+sub_no = "01"
+label = "セッションの進め方"
+source = "plan.typ"
+""".strip(),
+                encoding="utf-8",
+            )
+            # ソースファイルと中間生成物を用意
+            (session_dir / "slides.md").write_text("# スライド", encoding="utf-8")
+            (session_dir / "plan.typ").write_text("= 進め方", encoding="utf-8")
+            (session_dir / "slides.pdf").write_bytes(b"pdf-slides")
+            (session_dir / "slides.html").write_text("<html></html>", encoding="utf-8")
+            (session_dir / "plan.pdf").write_bytes(b"pdf-plan")
+
+            exported = export_session_dist(session_dir, clean_intermediates=True)
+
+            # 1. dist/ に成果物がエクスポートされていること
+            dist_dir = session_dir / "dist"
+            self.assertTrue((dist_dir / "02-00_§2. 愉快なハイキング_スライド資料_1156回BS講習会.pdf").is_file())
+            self.assertTrue((dist_dir / "02-01_§2. 愉快なハイキング_セッションの進め方_1156回BS講習会.pdf").is_file())
+
+            # 2. ソースファイルが保持されていること
+            self.assertTrue((session_dir / "session.toml").is_file())
+            self.assertTrue((session_dir / "slides.md").is_file())
+            self.assertTrue((session_dir / "plan.typ").is_file())
+
+            # 3. セッション直下の中間 PDF が削除されていること
+            self.assertFalse((session_dir / "slides.pdf").exists())
+            self.assertFalse((session_dir / "plan.pdf").exists())
+
+    def test_cli_export_with_clean_flag_deletes_intermediate_pdfs(self):
+        from scripts.session_tool import main
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            session_dir = Path(tmpdir)
+            (session_dir / "session.toml").write_text(
+                """
+section_no = "02"
+session_name = "§2. 愉快なハイキング"
+event_short = "1156回BS講習会"
+
+[files.plan]
+sub_no = "01"
+label = "セッションの進め方"
+source = "plan.typ"
+""".strip(),
+                encoding="utf-8",
+            )
+            (session_dir / "plan.typ").write_text("= 進め方", encoding="utf-8")
+            (session_dir / "plan.pdf").write_bytes(b"pdf-plan")
+
+            # CLI経由で export --clean を実行
+            main(["export", str(session_dir), "--clean"])
+
+            dist_dir = session_dir / "dist"
+            self.assertTrue((dist_dir / "02-01_§2. 愉快なハイキング_セッションの進め方_1156回BS講習会.pdf").is_file())
+            self.assertFalse((session_dir / "plan.pdf").exists())
+            self.assertTrue((session_dir / "plan.typ").is_file())
 
     def test_init_session_toml_applies_bs_preset_and_path_inference(self):
         with tempfile.TemporaryDirectory() as tmpdir:
