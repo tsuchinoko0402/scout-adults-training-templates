@@ -4,6 +4,19 @@
 #let border-gray = luma(180)
 #let header-bg = luma(235)
 
+// 標準フォント設定（sys.inputs による外部注入にも対応）
+#let default-doc-font-sans = if "font-sans" in sys.inputs {
+  (sys.inputs.font-sans,)
+} else {
+  ("Hiragino Kaku Gothic ProN", "Hiragino Sans")
+}
+
+#let default-doc-font-serif = if "font-serif" in sys.inputs {
+  (sys.inputs.font-serif,)
+} else {
+  ("Hiragino Mincho ProN", "YuMincho")
+}
+
 // ==============================================================================
 // 共通内部ヘルパー関数
 // ==============================================================================
@@ -20,7 +33,7 @@
   header: context {
     // 2ページ目以降に上部ヘッダーを表示（1ページ目は本文タイトルと重複するため非表示）
     if counter(page).get().first() > 1 [
-      #set text(size: 8pt, fill: luma(80), font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
+      #set text(size: 8pt, fill: luma(80), font: default-doc-font-sans)
       #grid(
         columns: (1fr, auto),
         align(left)[#course-name],
@@ -33,7 +46,7 @@
   footer: context [
     #line(length: 100%, stroke: 0.4pt + border-gray)
     #v(-2pt)
-    #set text(size: 8pt, fill: luma(60), font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic"))
+    #set text(size: 8pt, fill: luma(60), font: default-doc-font-sans)
     #grid(
       columns: (1.2fr, 1fr, 1.2fr),
       align(left)[#session-label],
@@ -72,7 +85,7 @@
   ))
 
   set text(
-    font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
+    font: default-doc-font-sans,
     size: 9pt,
     fill: rgb("#000000"),
     lang: "ja",
@@ -89,7 +102,7 @@
       columns: (1fr, auto),
       align: (left, right),
       [#text(8.5pt, fill: luma(80))[#course-name #session-label]],
-      [#text(8.5pt, fill: luma(80))[#if date != "" [#date#h(8pt)]#if trainer-name != "" [担当：#trainer-name]]]
+      [#text(8.5pt, fill: luma(80))[#date]]
     )
     #v(2pt)
     #align(center)[
@@ -177,7 +190,7 @@
   ))
 
   set text(
-    font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
+    font: default-doc-font-sans,
     size: 9.5pt,
     fill: rgb("#000000"),
     lang: "ja",
@@ -366,7 +379,7 @@
   ))
 
   set text(
-    font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
+    font: default-doc-font-sans,
     size: 9.5pt,
     fill: rgb("#000000"),
     lang: "ja",
@@ -399,40 +412,37 @@
     #text(weight: "bold", size: 9.5pt)[#it.body]
   ]
 
-  // タイトル部（文字のすぐ下に罫線を引き締め、離れすぎを解消）
-  block(
-    width: 100%,
-    stroke: (bottom: 1.5pt + black),
-    inset: (bottom: 2.5pt),
-    above: 0pt,
-    below: 5pt,
-  )[
-    #text(16pt, weight: "bold")[#document-type]
+  // 1ページ目ヘッダー部：所属コース名・セッション情報・実施日
+  block(width: 100%, inset: (bottom: 0pt))[
+    #grid(
+      columns: (1fr, auto),
+      align: (left + bottom, right + bottom),
+      [#text(8.5pt, fill: luma(70))[#course-name #if session-label != "" [ #h(4pt) #session-label]]],
+      [#text(8.5pt, fill: luma(70))[#date]],
+    )
+    #v(1.5pt)
+    #line(length: 100%, stroke: 0.4pt + border-gray)
   ]
 
-  // セッション名枠
-  rect(
-    stroke: 1pt + black,
-    inset: (x: 10pt, y: 6pt),
-    width: 100%,
-    radius: 0pt,
-  )[
-    #text(12pt, weight: "bold")[#if session-id != "" [#session-id ] #title]
+  v(4pt)
+
+  // メインタイトル（中央揃え・端正な計画書表題）
+  align(center)[
+    #block(
+      width: 100%,
+      stroke: (bottom: 1.2pt + black),
+      inset: (bottom: 4pt),
+    )[
+      #text(16pt, weight: "bold", tracking: 2pt)[#document-type]
+    ]
   ]
 
-  v(2pt)
+  if datetime-info != "" {
+    v(1.5pt)
+    align(right)[#text(8.5pt, fill: luma(80))[実施日時：#datetime-info]]
+  }
 
-  // 日時と担当者
-  grid(
-    columns: (1fr, auto),
-    align: (left + horizon, right + horizon),
-    [#if datetime-info != "" [#text(9pt)[#datetime-info]]],
-    [#text(9pt)[
-      #if role-name != "" [担当：#role-name#h(8pt)氏名：#trainer-name] else if trainer-name != "" [担当：#trainer-name]
-    ]],
-  )
-
-  v(6pt)
+  v(4pt)
 
   body
 }

@@ -6,6 +6,13 @@
 #let gray-light = luma(240)
 #let gray-border = luma(180)
 
+// 標準フォント設定（sys.inputs による外部注入にも対応）
+#let default-handout-font-sans = if "font-sans" in sys.inputs {
+  (sys.inputs.font-sans,)
+} else {
+  ("Hiragino Kaku Gothic ProN", "Hiragino Sans")
+}
+
 /// ワークシート用の記入枠を表示する関数（白黒印刷対応）
 /// - height: 記入枠の高さ（デフォルト: 40mm）
 /// - label: 枠上部に表示するタイトルラベル（デフォルト: "ワーク記入欄"）
@@ -78,7 +85,7 @@
 
   // 日本語フォント設定（白黒テキスト）
   set text(
-    font: ("Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Meiryo"),
+    font: default-handout-font-sans,
     size: 9pt,
     fill: black,
     lang: "ja",
