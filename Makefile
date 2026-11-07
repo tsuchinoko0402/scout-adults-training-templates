@@ -132,7 +132,8 @@ slides-pdf: check-session
 slides-html: check-session
 	@echo "▶ スライド HTML をビルド中: $(SESSION_DIR)/slides.md -> $(SESSION_DIR)/slides.html"
 	$(MARP) --theme-set $(THEME_CSS) --allow-local-files --html $(SESSION_DIR)/slides.md -o $(SESSION_DIR)/slides.html
-	@echo "✓ スライド HTML 生成完了: $(SESSION_DIR)/slides.html"
+	@$(PYTHON) scripts/session_tool.py bundle-html "$(SESSION_DIR)/slides.html" --base-dir "$(SESSION_DIR)"
+	@echo "✓ スライド HTML 生成完了（画像インライン化済）: $(SESSION_DIR)/slides.html"
 
 # Typst 配布資料の PDF 出力
 handout: check-session

@@ -6,6 +6,8 @@
 """
 
 import argparse
+import base64
+import mimetypes
 from pathlib import Path
 import re
 import shutil
@@ -407,6 +409,43 @@ def _resolve_built_artifacts(session_dir: Path, source_name: str) -> list[Path]:
     return [p for p in candidates if p.is_file()]
 
 
+def inline_html_assets(html_path: Path, base_dir: Path) -> bool:
+    """
+    HTML ファイル内のローカル画像相対パス参照を Base64 Data URI にインライン化し、
+    外部アセットファイルなしで完全に自己完結して表示できるようにする。
+
+    @param html_path 対象の HTML ファイルパス
+    @param base_dir 相対パス解決の起点ディレクトリ
+    @returns 置換が行われたかどうか
+    """
+    if not html_path.is_file():
+        return False
+
+    content = html_path.read_text(encoding="utf-8")
+
+    def _replace_src(match: re.Match[str]) -> str:
+        src = match.group(1)
+        if src.startswith(("data:", "http://", "https://", "//")):
+            return match.group(0)
+
+        img_path = (base_dir / src).resolve()
+        if img_path.is_file():
+            mime, _ = mimetypes.guess_type(img_path)
+            if not mime:
+                ext = img_path.suffix.lower()
+                mime = "image/jpeg" if ext in (".jpg", ".jpeg") else "image/png"
+            b64 = base64.b64encode(img_path.read_bytes()).decode("ascii")
+            return f'src="data:{mime};base64,{b64}"'
+        return match.group(0)
+
+    pattern = re.compile(r'src=["\']([^"\']+\.(?:png|jpe?g|gif|svg|webp))["\']', re.IGNORECASE)
+    new_content, count = pattern.subn(_replace_src, content)
+    if count > 0:
+        html_path.write_text(new_content, encoding="utf-8")
+        return True
+    return False
+
+
 def export_session_dist(session_dir: Path) -> list[Path]:
     """
     session.toml の定義に基づき、ビルド済み成果物を正式ファイル名で dist/ に出力する。
@@ -434,6 +473,8 @@ def export_session_dist(session_dir: Path) -> list[Path]:
             dest_name = format_dist_filename(config, entry, artifact.suffix)
             dest_path = dist_dir / dest_name
             shutil.copy2(artifact, dest_path)
+            if dest_path.suffix.lower() == ".html":
+                inline_html_assets(dest_path, session_dir)
             exported.append(dest_path)
 
     return exported
@@ -650,6 +691,10 @@ def main(argv: list[str] | None = None) -> None:
     export_p = sub.add_parser("export", help="ビルド済み成果物を dist/ に正式ファイル名で出力")
     export_p.add_argument("session_dir", type=Path, help="セッションディレクトリのパス")
 
+    bundle_p = sub.add_parser("bundle-html", help="HTML内のローカル画像をBase64にインライン化")
+    bundle_p.add_argument("html_path", type=Path, help="対象HTMLファイルのパス")
+    bundle_p.add_argument("--base-dir", type=Path, default=None, help="相対パス解決の起点ディレクトリ")
+
     init_p = sub.add_parser("init", help="session.toml をプリセットまたはパスから初期化")
     init_p.add_argument("session_dir", type=Path, help="セッションディレクトリのパス")
     init_p.add_argument("--preset", default=None, help="プリセット名 (bs1〜bs5, wb1〜wb14, dan1〜dan16)")
@@ -666,6 +711,13 @@ def main(argv: list[str] | None = None) -> None:
         print(f"▶ 提出・共有用ファイルを出力しました ({args.session_dir / 'dist'}):")
         for f in sorted(files):
             print(f"  ✓ {f.name}")
+    elif args.command == "bundle-html":
+        base_dir = args.base_dir or args.html_path.parent
+        changed = inline_html_assets(args.html_path, base_dir)
+        if changed:
+            print(f"✓ HTML内のローカル画像をBase64にインライン化しました: {args.html_path}")
+        else:
+            print(f"・インライン化対象のローカル画像はありませんでした: {args.html_path}")
     elif args.command == "init":
         toml_path = init_session_toml(
             args.session_dir,
